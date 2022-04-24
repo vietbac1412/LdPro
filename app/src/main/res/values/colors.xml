@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--TEXT DARK-->
+    <color name="darkPrimaryText">#DE000000</color>
+    <color name="darkSecondaryText">#8A000000</color>
+    <color name="darkDisableHindText">#61000000</color>
+    <color name="darkDividersText">#1F000000</color>
+    <color name="darkActiveIcon">#8A000000</color>
+    <color name="darkInactiveIcon">#61000000</color>
+    <color name="waiteIconColor">#FFE0E0E0</color>
+
+    <!--TEXT LIGHT-->
+    <color name="lightPrimaryText">#FFFFFF</color>
+    <color name="lightSecondaryText">#B3FFFFFF</color>
+    <color name="lightDisableHindText">#80FFFFFF</color>
+    <color name="lightDividersText">#1FFFFFFF</color>
+    <color name="lightActiveIcon">#FFFFFFFF</color>
+    <color name="lightInactiveIcon">#80FFFFFF</color>
+
+    <color name="primaryColor">#36a3f7</color>
+    <color name="primaryColorBar">#36a3f7</color>
+    <color name="primaryColorStart">#36a3f7</color>
+    <color name="primaryColorCenter">#36a3f7</color>
+    <color name="primaryLightColor">#B6DCFD</color>
+    <color name="primaryVeryLightColor">#EAF6FF</color>
+    <color name="primaryDarkColor">#3192DD</color>
+    <color name="primaryColorDark">#3192DD</color>
+    <color name="secondaryColor">#00c75f</color>
+    <color name="secondaryLightColor">#9cff57</color>
+    <color name="secondaryVeryLightColor">#E0F8EB</color>
+    <color name="secondaryDarkColor">#1faa00</color>
+    <color name="tertiaryColor">#FF6F22</color>
+    <color name="tertiaryLightColor">#ffcc80</color>
+    <color name="tertiaryVeryLightColor">#FFEFD8</color>
+    <color name="tertiaryDarkColor">#FF5722</color>
+
+    <color name="primaryTextColor">#000000</color>
+    <color name="secondaryTextColor">#000000</color>
+    <color name="primaryColorOpacity">#1AFF5722</color>
+
+    <color name="colorPrimaryDark">#FF5722</color>
+    <color name="colorAccent">#000000</color>
+
+    <color name="colorTitle">#FFFFFF</color>
+    <color name="colorBackground">#ECEFF1</color>
+
+    <color name="tangerine">#FF5722</color>
+    <color name="very_light_grey">#f2f2f2</color>
+    <color name="very_light_grey_v2">#f9f9f9</color>
+    <color name="white">#ffffff</color>
+    <color name="perrywinkle">#918bd5</color>
+    <color name="dark_sky_blue">#36a3f7</color>
+    <color name="blue_grey">#D6EDFE</color>
+    <color name="light_grey">#bbbbbb</color>
+    <color name="light_grey_v2">#80BBBBBB</color>
+    <color name="pinkish_red">#f21e3c</color>
+    <color name="shamrock_green">#00c75f</color>
+    <color name="lightish_blue">#3b7cff</color>
+    <color name="greenish_teal">#34bfa3</color>
+    <color name="greyish_brown">#4a4a4a</color>
+    <color name="black_50opacity">#66000000</color>
+    <color name="black_60opacity">#80000000</color>
+    <color name="tangerine_10opacity">#FCF0E3</color>
+    <color name="dark_gray">#c3c3c3</color>
+    <color name="light_gray">#eceff1</color>
+    <color name="pinkish_red_v1">#fee8eb</color>
+    <color name="shamrock_green_10opacity">#E0F9EC</color>
+    <color name="red_tomato">#ff5959</color>
+    <color name="sliver">#C4C4C4</color>
+    <color name="yellow">#FFEB3B</color>
+    <color name="sliver_white">#e4e4e4</color>
+
+    <color name="dark_red">#e50019</color>
+    <color name="dark_sea_blue">#004a9c</color>
+    <color name="keyboard_background">#bec2c8</color>
+    <color name="keyboard_button">#f3f3f3</color>
+</resources>

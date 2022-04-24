@@ -1,0 +1,551 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimary</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="preferenceTheme">@style/PreferenceTheme</item>
+
+        <item name="android:typeface">serif</item>
+<!--        <item name="md_regular_font">Roboto-Regular.ttf</item>-->
+
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:actionButtonStyle">@style/ActionButton</item>
+    </style>
+
+    <style name="LauncherTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/tertiaryColor</item>
+        <item name="colorPrimaryDark">@color/tertiaryDarkColor</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="preferenceTheme">@style/PreferenceTheme</item>
+
+        <item name="android:typeface">serif</item>
+<!--        <item name="md_regular_font">Roboto-Regular.ttf</item>-->
+
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:actionButtonStyle">@style/ActionButton</item>
+
+    </style>
+
+    <style name="ActionButton" parent="@android:style/Widget.ActionButton">
+        <item name="android:paddingStart" tools:ignore="NewApi">8dp</item>
+        <item name="android:paddingEnd" tools:ignore="NewApi">8dp</item>
+        <item name="fontFamily">@font/</item>
+        <item name="android:minWidth">0dp</item>
+    </style>
+
+    <style name="PreferenceTheme" parent="PreferenceThemeOverlay">
+        <item name="android:textSize">@dimen/material_text_subhead</item>
+        <item name="android:textColor">@color/darkPrimaryText</item>
+        <item name="colorAccent" tools:ignore="NewApi">@color/tertiaryDarkColor</item>
+        <item name="android:listSeparatorTextViewStyle">@style/PreferenceListHeader</item>
+    </style>
+
+    <style name="PreferenceListHeader" parent="@android:style/Widget.TextView">
+        <item name="android:textSize">@dimen/material_text_subhead</item>
+        <item name="android:textColor">@color/darkPrimaryText</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="NoActionBarTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/tertiaryColor</item>
+        <item name="colorPrimaryDark">@color/tertiaryDarkColor</item>
+        <item name="colorAccent">#4D4D4D</item>
+
+        <item name="android:typeface">serif</item>
+<!--        <item name="md_regular_font">Roboto-Regular.ttf</item>-->
+
+        <item name="editTextStyle">@style/LoginEditTextStyle</item>
+
+        <item name="autoCompleteTextViewStyle">@style/LoginEditTextStyle</item>
+
+        <item name="buttonStyle">@style/LoginButtonStyle</item>
+    </style>
+
+    <style name="BottomAppBarTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
+    <style name="Pos365BackgroundStyle">
+    </style>
+
+    <style name="TextViewSingleLine">
+        <item name="android:textColor">#000000</item>
+        <item name="android:state_selected">true</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">marquee</item>
+        <item name="android:marqueeRepeatLimit">marquee_forever</item>
+    </style>
+
+    <style name="LoginTextViewStyle" parent="TextViewSingleLine">
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="LoginEditTextStyle" parent="Widget.AppCompat.EditText">
+        <item name="android:textColor">#4D4D4D</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:drawablePadding">18dp</item>
+    </style>
+
+    <style name="LoginButtonStyle" parent="Widget.AppCompat.Button">
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">@dimen/login_button_font_size</item>
+    </style>
+
+    <style name="TableDetailTextHead" parent="TextCaptionDark">
+        <item name="android:state_selected">true</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">marquee</item>
+        <item name="android:marqueeRepeatLimit">marquee_forever</item>
+    </style>
+
+    <style name="TableDetailTextBottom" parent="TextSubheadingDark">
+        <item name="android:state_selected">true</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">marquee</item>
+        <item name="android:marqueeRepeatLimit">marquee_forever</item>
+    </style>
+
+    <style name="TextViewTitleNameProduct" parent="TextSubheadingDark">
+        <item name="android:state_selected">true</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">marquee</item>
+        <item name="android:marqueeRepeatLimit">marquee_forever</item>
+    </style>
+
+    <style name="TextViewPriceProduct" parent="TextSubheadingDark">
+        <item name="android:state_selected">true</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">marquee</item>
+        <item name="android:marqueeRepeatLimit">marquee_forever</item>
+    </style>
+
+    <style name="TextViewTreeViewName" parent="TextViewSingleLine">
+        <item name="android:textSize">@dimen/material_text_body2</item>
+        <item name="android:textColor">@color/darkPrimaryText</item>
+    </style>
+
+    <style name="TextViewNameNoteBook" parent="TextTitleDark">
+        <item name="android:state_selected">true</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">marquee</item>
+        <item name="android:marqueeRepeatLimit">marquee_forever</item>
+    </style>
+
+    <style name="TextViewPay" parent="TextSubheadingDark">
+        <item name="android:layout_height">@dimen/height_edit_text</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:padding">5dp</item>
+        <item name="android:state_selected">true</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">marquee</item>
+        <item name="android:marqueeRepeatLimit">marquee_forever</item>
+        <item name="android:textColor">@color/greyish_brown</item>
+    </style>
+
+    <style name="EditTextPay" parent="TextSubheadingDark">
+        <item name="android:layout_height">@dimen/pay_height_textview_and_edittext</item>
+        <item name="android:gravity">center_vertical|right</item>
+        <item name="android:padding">5dp</item>
+    </style>
+
+    <style name="EditTextTableDetail" parent="TextSubheadingDark">
+        <item name="android:layout_height">40dp</item>
+        <item name="android:gravity">center_vertical|left</item>
+        <item name="android:padding">5dp</item>
+    </style>
+
+    <style name="EditTextTableDetailRed" parent="TextSubheadingDark">
+        <item name="android:layout_height">40dp</item>
+        <item name="android:gravity">center_vertical|left</item>
+        <item name="android:padding">5dp</item>
+    </style>
+
+    <style name="EditTextDialog" parent="TextCaptionDark">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center_vertical|right</item>
+        <item name="android:padding">5dp</item>
+    </style>
+
+    <style name="RadioButtonPay" parent="TextViewSingleLine">
+        <item name="android:textSize">13sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:button">@null</item>
+    </style>
+
+    <style name="RadioButtonPayV2" parent="TextViewSingleLine">
+        <item name="android:textSize">16sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:button">@null</item>
+    </style>
+
+    <style name="RadioButtonPosition" parent="TextViewSingleLine">
+        <item name="android:textSize">16sp</item>
+        <item name="android:gravity">center</item>
+
+        <item name="android:button">@null</item>
+    </style>
+
+    <style name="RadioButtonSmall" parent="TextViewSingleLine">
+        <item name="android:textSize">16sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:button">@null</item>
+    </style>
+
+    <style name="RadioButtonV3" parent="TextViewSingleLine">
+        <item name="android:textSize">13sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:button">@null</item>
+    </style>
+
+    <style name="RadioButtonUnderline" parent="TextViewSingleLine">
+        <item name="android:textSize">13sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:button">@null</item>
+    </style>
+
+    <style name="SpacePay">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0.5dp</item>
+        <item name="android:background">@color/darkDividersText</item>
+        <item name="android:layout_marginEnd" tools:targetApi="jelly_bean_mr1">4dp</item>
+        <item name="android:layout_marginLeft">4dp</item>
+        <item name="android:layout_marginRight">4dp</item>
+        <item name="android:layout_marginStart" tools:targetApi="jelly_bean_mr1">4dp</item>
+    </style>
+
+    <style name="SpacePayV2">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">@color/very_light_grey</item>
+    </style>
+
+    <style name="SpaceItemTable">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0.5dp</item>
+        <item name="android:background">@color/waiteIconColor</item>
+        <item name="android:layout_marginEnd" tools:targetApi="jelly_bean_mr1">0dp</item>
+        <item name="android:layout_marginLeft">0dp</item>
+        <item name="android:layout_marginRight">0dp</item>
+        <item name="android:layout_marginStart" tools:targetApi="jelly_bean_mr1">0dp</item>
+    </style>
+
+    <style name="SpaceHeaderRestaurant">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0.5dp</item>
+        <item name="android:background">@color/primaryColor</item>
+        <item name="android:layout_marginEnd" tools:targetApi="jelly_bean_mr1">0dp</item>
+        <item name="android:layout_marginLeft">0dp</item>
+        <item name="android:layout_marginRight">0dp</item>
+        <item name="android:layout_marginStart" tools:targetApi="jelly_bean_mr1">0dp</item>
+    </style>
+
+    <style name="SpaceWhite">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0.5dp</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:layout_marginEnd" tools:targetApi="jelly_bean_mr1">4dp</item>
+        <item name="android:layout_marginLeft">4dp</item>
+        <item name="android:layout_marginRight">4dp</item>
+        <item name="android:layout_marginStart" tools:targetApi="jelly_bean_mr1">4dp</item>
+    </style>
+
+    <style name="SpaceVeryGray">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0.5dp</item>
+        <item name="android:background">@color/very_light_grey</item>
+        <item name="android:layout_marginEnd" tools:targetApi="jelly_bean_mr1">4dp</item>
+        <item name="android:layout_marginLeft">4dp</item>
+        <item name="android:layout_marginRight">4dp</item>
+        <item name="android:layout_marginStart" tools:targetApi="jelly_bean_mr1">4dp</item>
+    </style>
+
+    <style name="SpaceTotalPayment">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0.5dp</item>
+        <item name="android:background">@color/darkDividersText</item>
+        <item name="android:layout_marginEnd" tools:targetApi="jelly_bean_mr1">8dp</item>
+        <item name="android:layout_marginLeft">4dp</item>
+        <item name="android:layout_marginRight">4dp</item>
+        <item name="android:layout_marginStart" tools:targetApi="jelly_bean_mr1">8dp</item>
+    </style>
+
+    <style name="RadioButtonStyle" parent="Theme.AppCompat.Light">
+        <item name="colorControlActivated">@color/primaryColor</item>
+    </style>
+
+    <style name="switchStyle" parent="Theme.AppCompat.Light">
+        <item name="colorControlActivated">@color/primaryColor</item>
+    </style>
+
+    <style name="Toolbar.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <!--INPUT TEXT-->
+    <style name="InputPay" parent="EditTextPay">
+        <item name="android:textSize">14sp</item>
+        <item name="android:gravity">start|center_vertical</item>
+        <item name="android:textColorHint">@color/dark_gray</item>
+        <item name="android:button">@null</item>
+    </style>
+
+    <style name="InputPayV2" parent="EditTextPay">
+        <item name="android:textSize">14sp</item>
+        <item name="android:gravity">start|center</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+        <item name="android:textColor">@color/dark_sky_blue</item>
+        <item name="android:textColorHint">@color/dark_gray</item>
+        <item name="android:background">@color/very_light_grey</item>
+        <item name="android:button">@null</item>
+    </style>
+
+    <!--TEXT DARK-->
+    <style name="TextButtonDark">
+        <item name="android:textSize">@dimen/material_text_button</item>
+        <item name="android:textColor">@color/darkPrimaryText</item>
+    </style>
+
+    <style name="TextMenuDark">
+        <item name="android:textSize">@dimen/material_text_menu</item>
+        <item name="android:textColor">@color/darkPrimaryText</item>
+    </style>
+
+    <style name="TextCaptionDark">
+        <item name="android:textSize">@dimen/material_text_caption</item>
+        <item name="android:textColor">@color/darkSecondaryText</item>
+    </style>
+
+    <style name="TextBody1Dark">
+        <item name="android:textSize">@dimen/material_text_body1</item>
+        <item name="android:textColor">@color/darkPrimaryText</item>
+    </style>
+
+    <style name="TextBody2Dark">
+        <item name="android:textSize">@dimen/material_text_body2</item>
+        <item name="android:textColor">@color/darkPrimaryText</item>
+    </style>
+
+    <style name="TextSubheadingDark">
+        <item name="android:textSize">@dimen/material_text_subhead</item>
+        <item name="android:textColor">@color/darkPrimaryText</item>
+    </style>
+
+    <style name="TextTitleDark">
+        <item name="android:textSize">@dimen/material_text_title</item>
+        <item name="android:textColor">@color/darkPrimaryText</item>
+    </style>
+
+    <style name="TextHeadlineDark">
+        <item name="android:textSize">@dimen/material_text_headline</item>
+        <item name="android:textColor">@color/darkPrimaryText</item>
+    </style>
+
+    <style name="TextDisplay1Dark">
+        <item name="android:textSize">@dimen/material_text_display1</item>
+        <item name="android:textColor">@color/darkSecondaryText</item>
+    </style>
+
+    <style name="TextDisplay2Dark">
+        <item name="android:textSize">@dimen/material_text_display2</item>
+        <item name="android:textColor">@color/darkSecondaryText</item>
+    </style>
+
+    <style name="TextDisplay3Dark">
+        <item name="android:textSize">@dimen/material_text_display3</item>
+        <item name="android:textColor">@color/darkSecondaryText</item>
+    </style>
+
+    <style name="TextDisplay4Dark">
+        <item name="android:textSize">@dimen/material_text_display4</item>
+        <item name="android:textColor">@color/darkSecondaryText</item>
+    </style>
+
+    <!--TEXT LIGHT-->
+    <style name="TextButtonLight">
+        <item name="android:textSize">@dimen/material_text_button</item>
+        <item name="android:textColor">@color/lightPrimaryText</item>
+    </style>
+
+    <style name="TextMenuLight">
+        <item name="android:textSize">@dimen/material_text_menu</item>
+        <item name="android:textColor">@color/lightPrimaryText</item>
+    </style>
+
+    <style name="TextCaptionLight">
+        <item name="android:textSize">@dimen/material_text_caption</item>
+        <item name="android:textColor">@color/lightSecondaryText</item>
+    </style>
+
+    <style name="TextBody1Light">
+        <item name="android:textSize">@dimen/material_text_body1</item>
+        <item name="android:textColor">@color/lightPrimaryText</item>
+    </style>
+
+    <style name="TextBody2Light">
+        <item name="android:textSize">@dimen/material_text_body2</item>
+        <item name="android:textColor">@color/lightPrimaryText</item>
+    </style>
+
+    <style name="TextSubheadingLight">
+        <item name="android:textSize">@dimen/material_text_subhead</item>
+        <item name="android:textColor">@color/lightPrimaryText</item>
+    </style>
+
+    <style name="TextTitleLight">
+        <item name="android:textSize">@dimen/material_text_title</item>
+        <item name="android:textColor">@color/lightPrimaryText</item>
+    </style>
+
+    <style name="TextHeadlineLight">
+        <item name="android:textSize">@dimen/material_text_headline</item>
+        <item name="android:textColor">@color/lightPrimaryText</item>
+    </style>
+
+    <style name="TextDisplay1Light">
+        <item name="android:textSize">@dimen/material_text_display1</item>
+        <item name="android:textColor">@color/lightSecondaryText</item>
+    </style>
+
+    <style name="TextDisplay2Light">
+        <item name="android:textSize">@dimen/material_text_display2</item>
+        <item name="android:textColor">@color/lightSecondaryText</item>
+    </style>
+
+    <style name="TextDisplay3Light">
+        <item name="android:textSize">@dimen/material_text_display3</item>
+        <item name="android:textColor">@color/lightSecondaryText</item>
+    </style>
+
+    <style name="TextDisplay4Light">
+        <item name="android:textSize">@dimen/material_text_display4</item>
+        <item name="android:textColor">@color/lightSecondaryText</item>
+    </style>
+
+    <style name="viewPagerTitleStrip" parent="@style/TextBody1Light">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="TextTitle5Light">
+        <item name="android:textSize">@dimen/material_text_title</item>
+        <item name="android:textColor">@color/lightSecondaryText</item>
+    </style>
+
+    <style name="BlueCheckbox" parent="Theme.AppCompat.Light">
+        <item name="colorControlNormal">@color/darkSecondaryText</item>
+    </style>
+
+    <style name="MaterialMargins" >
+        <item name="android:paddingLeft">0dp</item>
+        <item name="android:paddingRight">0dp</item>
+        <item name="android:paddingTop">0dp</item>
+    </style>
+
+    <style name="Poppins28PtBlue">
+        <item name="android:textSize">28sp</item>
+        <item name="android:lineSpacingExtra">7sp</item>
+        <item name="android:textColor">#005aa8</item>
+    </style>
+
+    <style name="Poppins28PtGray">
+        <item name="android:textSize">28sp</item>
+        <item name="android:lineSpacingExtra">7sp</item>
+        <item name="android:textColor">#c3c3c3</item>
+    </style>
+
+    <style name="Montserrat20PtGreyishBrown">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/greyish_brown</item>
+    </style>
+
+    <style name="Montserrat20PtGreyishBold">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/greyish_brown</item>
+    </style>
+
+    <style name="Montserrat20PtGray">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/dark_gray</item>
+    </style>
+
+    <style name="Montserrat16PtGreyishBrown">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/greyish_brown</item>
+    </style>
+
+    <style name="Montserrat16PtGreyishBrownBold">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/greyish_brown</item>
+    </style>
+
+    <style name="Montserrat16PtWhite">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="Montserrat16Pt">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/dark_gray</item>
+    </style>
+
+    <style name="Montserrat14PtGray">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">#949494</item>
+    </style>
+
+    <style name="Montserrat14PtGreyishBrown">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/greyish_brown</item>
+    </style>
+
+    <style name="Montserrat14PtGreyishBrownBold">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/greyish_brown</item>
+    </style>
+
+    <style name="Montserrat12sp">
+        <item name="android:textSize">12sp</item>
+    </style>
+    <style name="RadioGrid" parent="@android:style/Widget.CompoundButton.RadioButton">
+    </style>
+
+    <style name="RadioList" parent="@android:style/Widget.CompoundButton.RadioButton">
+    </style>
+
+    <style name="customHintStyle" parent="TextAppearance.Design.Hint">
+        <item name="android:textColor">@color/dark_gray</item>
+    </style>
+
+</resources>

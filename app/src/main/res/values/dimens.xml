@@ -1,0 +1,150 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <dimen name="progress_all_size">64dp</dimen>
+
+    <!--Text-->
+    <dimen name="material_text_button">14sp</dimen>
+    <dimen name="material_text_menu">14sp</dimen>
+    <dimen name="material_text_caption">12sp</dimen>
+    <dimen name="material_text_body1">14sp</dimen>
+    <dimen name="material_text_body2">14sp</dimen>
+    <dimen name="material_text_subhead">16sp</dimen>
+    <dimen name="material_text_title">20sp</dimen>
+    <dimen name="material_text_headline">24sp</dimen>
+    <dimen name="material_text_display1">34sp</dimen>
+    <dimen name="material_text_display2">45sp</dimen>
+    <dimen name="material_text_display3">56sp</dimen>
+    <dimen name="material_text_display4">112sp</dimen>
+
+    <dimen name="button_radius">4dp</dimen>
+    <dimen name="text_view_radius">2dp</dimen>
+    <dimen name="button_stroke_width">0.5dp</dimen>
+
+    <!-- LAUNCHER-->
+    <dimen name="logo_pos_365_image_size">256dp</dimen>
+
+    <!-- LOGIN SCREEN -->
+    <dimen name="login_logo_size">250dp</dimen>
+    <dimen name="login_margin_end">10dp</dimen>
+    <dimen name="login_margin_start">10dp</dimen>
+    <dimen name="login_margin_top">8dp</dimen>
+    <dimen name="login_margin_bottom">16dp</dimen>
+    <dimen name="login_edit_text_font_size">20sp</dimen>
+    <dimen name="login_button_font_size">22sp</dimen>
+    <dimen name="login_width_content">360dp</dimen>
+    <dimen name="login_height_text_view">48dp</dimen>
+
+    <!-- Main Screen -->
+    <dimen name="main_search_product_image_radius">0.5dp</dimen>
+    <dimen name="main_search_product_image_stroke">0.5dp</dimen>
+    <dimen name="main_search_product_image_size">48dp</dimen>
+    <dimen name="main_search_product_self_image_size">156dp</dimen>
+    <dimen name="main_search_product_self_vn_pay_image_size">224dp</dimen>
+    <dimen name="main_image_not_result_size">144dp</dimen>
+    <dimen name="setting_prefs_margin_text">35dp</dimen>
+    <dimen name="main_search_product_image_size_small">30dp</dimen>
+    <dimen name="main_search_product_image_size_large">60dp</dimen>
+
+    <!--Main table detail-->
+    <dimen name="main_table_detail_button_action_size">48dp</dimen>
+    <dimen name="double_main_table_detail_button_action_size">96dp</dimen>
+
+    <!--Main Room/Table-->
+    <dimen name="main_item_room_table_width">92dp</dimen>
+    <dimen name="main_item_room_table_height">80dp</dimen>
+    <dimen name="main_room_table_note_state_square_size">16dp</dimen>
+    <dimen name="main_margin_room_table">6dp</dimen>
+
+    <!--Activity Pay-->
+    <dimen name="pay_edit_text_radius">12dp</dimen>
+    <dimen name="pay_stroke_width">1dp</dimen>
+
+    <!--Activity Extra-->
+    <dimen name="extra_detail_button_size">48dp</dimen>
+
+    <!--Activity Served-->
+    <dimen name="item_menu_done_served_height">48dp</dimen>
+
+    <!--Activity Restaurant-->
+    <dimen name="main_item_product_height">88dp</dimen>
+
+    <!--Setting-->
+    <dimen name="customTitle">14sp</dimen>
+    <dimen name="customEntry">18sp</dimen>
+
+    <!--Height-->
+    <dimen name="height_title">32dp</dimen>
+    <dimen name="height_tool_bar">48dp</dimen>
+    <dimen name="partial_time_action_image_size">28dp</dimen>
+
+    <dimen name="layout_barcode_with_item">256dp</dimen>
+
+    <dimen name="radio_group_none_radius">0dp</dimen>
+
+    <dimen name="space_item_layout_action_product">8dp</dimen>
+    <dimen name="drop_down_height">128dp</dimen>
+    <dimen name="margin_left_drawer_count_view">32dp</dimen>
+
+    <dimen name="space_screen_edit_table_detail_v1">8dp</dimen>
+    <dimen name="space_screen_edit_table_detail_v2">16dp</dimen>
+    <dimen name="height_bar_seconds_edit_table_detail">32dp</dimen>
+
+    <dimen name="edit_menu_item_product_image_size">48dp</dimen>
+    <dimen name="space_screen_edit_menu_detail_v1">8dp</dimen>
+    <dimen name="space_screen_edit_menu_detail_v2">16dp</dimen>
+
+    <dimen name="pay_height_textview_and_edittext">48dp</dimen>
+
+    <dimen name="calculator_padding_button">1dp</dimen>
+    <dimen name="calculator_text_size_button">20sp</dimen>
+    <dimen name="self_height_banner">256dp</dimen>
+
+    <dimen name="keyboard_horizontal_gap">0dp</dimen>
+    <dimen name="keyboard_text_size">24sp</dimen>
+    <dimen name="keyboard_number_weight_height">48dp</dimen>
+
+    <dimen name="percent_more_product_1">0.22</dimen>
+    <dimen name="percent_more_product_2">0.78</dimen>
+
+    <dimen name="height_item_group_layout_v2">80dp</dimen>
+    <dimen name="height_image_in_item_search_product">92dp</dimen>
+
+    <dimen name="feature_search_product_image_size">48dp</dimen>
+
+    <dimen name="space_margin_small">3dp</dimen>
+
+    <!--    Extra-->
+    <dimen name="width_item_extra_size">96dp</dimen>
+    <dimen name="height_product_search_dialog">320dp</dimen>
+
+    <!--    VnPay Difference-->
+    <dimen name="spacing_xxs">4dp</dimen>
+    <dimen name="spacing_xs">8dp</dimen>
+    <dimen name="spacing_s">16dp</dimen>
+    <dimen name="spacing_m">32dp</dimen>
+    <dimen name="spacing_xl">48dp</dimen>
+    <dimen name="spacing_l">50dp</dimen>
+
+    <!--    PEEK HEIGHT-->
+    <dimen name="dash_board_filter_bottom_sheet">560dp</dimen>
+    <dimen name="point_calculation_bottom_sheet">560dp</dimen>
+    <dimen name="point_redeem_bottom_sheet">560dp</dimen>
+    <dimen name="bottom_sheet_height_300dp">300dp</dimen>
+
+    <dimen name="height_edit_text_small">36dp</dimen>
+    <dimen name="height_edit_text">42dp</dimen>
+
+    <dimen name="height_radio_button_small">36dp</dimen>
+    <dimen name="height_radio_button">40dp</dimen>
+
+    <dimen name="height_text_pay">44dp</dimen>
+    <dimen name="height_image_pay">38dp</dimen>
+
+    <!--POPUP-->
+    <dimen name="padding_start">10dp</dimen>
+    <dimen name="padding_end">30dp</dimen>
+
+</resources>
