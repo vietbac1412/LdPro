@@ -103,15 +103,15 @@ open class MainActivity : BaseActivity(), MainContract.View {
 
         // Setup drawer view
         setupDrawerContent(navigationView) // Handler event item click.
-        mCurrentMenuItem = navigationView.menu.findItem(R.id.nav_order_fragment)
+        mCurrentMenuItem = navigationView.menu.findItem(R.id.navMain)
 
         mHeaderView = navigationView.getHeaderView(0)
 
-        imvStatus = mHeaderView.imvStatus
+//        imvStatus = mHeaderView.imvStatus
 
         // Check UI show/hide menu.
         val menu  = navigationView.menu
-        mOrderView        = menu.findItem(R.id.nav_order_fragment)
+        mOrderView        = menu.findItem(R.id.navMain)
 
 
         setVersionItem()
@@ -168,7 +168,7 @@ open class MainActivity : BaseActivity(), MainContract.View {
         }
         when(menuItem.itemId) {
 
-            R.id.nav_order_fragment -> {
+            R.id.navMain -> {
                 setChooseMenuItem(menuItem)
                 displayOrderFragment()
             }
@@ -324,6 +324,7 @@ open class MainActivity : BaseActivity(), MainContract.View {
         } else {
             dismissDialog()
         }
+        Application.get(this)
     }
 
 

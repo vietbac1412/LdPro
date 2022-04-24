@@ -30,11 +30,11 @@ class MultiChoiceDelegate (val activity : Activity,val action : (Int, Boolean) -
 
     inner class ViewHolder(val view : View) : RecyclerView.ViewHolder(view) {
         fun binData (item: ItemCheckBox) {
-            view.checkBox.text = item.title
-            view.checkBox.isChecked = item.isCheck
-            view.checkBox.setOnCheckedChangeListener { _, check ->
-                action(adapterPosition, check)
-            }
+//            view.checkBox.text = item.title
+//            view.checkBox.isChecked = item.isCheck
+//            view.checkBox.setOnCheckedChangeListener { _, check ->
+//                action(adapterPosition, check)
+//            }
         }
     }
 }

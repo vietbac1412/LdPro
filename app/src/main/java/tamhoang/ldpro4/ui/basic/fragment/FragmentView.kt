@@ -16,5 +16,5 @@ interface FragmentView {
 
     fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean
 
-    fun getPrintServ() : PrintService
+//    fun getPrintServ() : PrintService
 }

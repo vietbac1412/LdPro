@@ -38,6 +38,6 @@ class LoadMoreAdapterDelegate(activity: Activity) : AdapterDelegate<List<Any>>()
     }
 
     inner class ViewHolder(itemVew: View) : RecyclerView.ViewHolder(itemVew) {
-        val loadMoreView = itemView.baseCircleProgress
+//        val loadMoreView = itemView.baseCircleProgress
     }
 }

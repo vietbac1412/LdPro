@@ -26,10 +26,12 @@ import android.view.animation.AnimationUtils
 import android.view.animation.Interpolator
 import android.view.animation.TranslateAnimation
 import android.view.inputmethod.InputMethodManager
+import android.webkit.PermissionRequest
 import android.webkit.WebView
 import android.widget.*
 import androidx.annotation.Keep
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -40,8 +42,6 @@ import com.afollestad.materialdialogs.bottomsheets.BottomSheet
 import com.afollestad.materialdialogs.bottomsheets.setPeekHeight
 import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
-import com.archit.calendardaterangepicker.customviews.CalendarListener
-import com.archit.calendardaterangepicker.customviews.DateRangeCalendarView
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.review.ReviewManager
 import com.google.android.play.core.review.ReviewManagerFactory
@@ -51,42 +51,22 @@ import com.wdullaer.materialdatetimepicker.time.TimePickerDialog
 import kotlinx.android.synthetic.main.toolbar.*
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import permissions.dispatcher.*
 import timber.log.Timber
-import tamhoang.ldpro4.CashierApplication
 import tamhoang.ldpro4.R
 import es.dmoral.toasty.Toasty
+import io.reactivex.Observable.fromIterable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_served_v3.*
-import kotlinx.android.synthetic.main.dialog_base_basic.*
-import kotlinx.android.synthetic.main.dialog_base_input.*
-import kotlinx.android.synthetic.main.dialog_base_input.btnApply
-import kotlinx.android.synthetic.main.dialog_base_input.tvTitle
-import kotlinx.android.synthetic.main.fragment_html_show.*
-import kotlinx.android.synthetic.main.partial_layout_popup_vertical_medium.*
-import kotlinx.android.synthetic.main.partial_layout_webprint.*
-import kotlinx.android.synthetic.main.popup_account_change.*
-import kotlinx.android.synthetic.main.popup_account_choose.btnCloseDialog
-import kotlinx.android.synthetic.main.popup_print_waiting.view.*
 import me.drakeet.support.toast.ToastCompat
+import tamhoang.ldpro4.Application
 import tamhoang.ldpro4.anim.BounceInterpolator
 import tamhoang.ldpro4.data.*
 import tamhoang.ldpro4.data.constants.Constants
 import tamhoang.ldpro4.data.local.PreferencesHelper
 import tamhoang.ldpro4.data.model.*
-import tamhoang.ldpro4.print.sunmi.utils.AidlUtil
 import tamhoang.ldpro4.ui.basic.ActivityView
-import tamhoang.ldpro4.ui.basic.adapter.ItemCheckBox
-import tamhoang.ldpro4.ui.custom.recycle.BaseRecycleView
-import tamhoang.ldpro4.ui.partner.adapter.MultiChoiceAdapter
-import tamhoang.ldpro4.ui.restaurantV2.adapter.PrintWaitingAdapter
-import tamhoang.ldpro4.ui.scan.ToolbarCaptureActivity
-import tamhoang.ldpro4.ui.screen.ScreenManager
-import tamhoang.ldpro4.ui.screen.present.VideoDisplay
-import tamhoang.ldpro4.ui.screen.present.VideoMenuDisplay
 import tamhoang.ldpro4.util.TypefaceUtil
 import tamhoang.ldpro4.util.extension.convertToCalendar
 import tamhoang.ldpro4.util.extension.drawTextToBitmap
@@ -110,7 +90,6 @@ import javax.inject.Inject
  * Created by CHUKIMMUOI on 1/31/2018.
  */
 @Keep
-@RuntimePermissions
 abstract class BaseActivity : AppCompatActivity(), ActivityView,
         DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
 
@@ -162,9 +141,9 @@ abstract class BaseActivity : AppCompatActivity(), ActivityView,
     private val mListFragment = mutableListOf<BaseFragment>()
     var countCacheFragment = 1 // Ap dung khi dung view pager, se co nhieu framgment.
 
-    val animation: Animation by lazy {
-        AnimationUtils.loadAnimation(this, R.anim.bounce)
-    }
+//    val animation: Animation by lazy {
+//        AnimationUtils.loadAnimation(this, R.anim.bounce)
+//    }
 
     private val interpolator: Interpolator by lazy {
         BounceInterpolator(0.2, 20.0)
@@ -174,16 +153,9 @@ abstract class BaseActivity : AppCompatActivity(), ActivityView,
 
     @Inject lateinit var dataManager: DataManager
     @Inject lateinit var preferencesHelper: PreferencesHelper
-
-    @Inject lateinit var printWaitingAdapter: PrintWaitingAdapter
-    @Inject lateinit var printService: PrintService
     @Inject lateinit var webPrint: WebView
 
     private val mNetworkReceiver: BroadcastReceiver by lazy { NetworkChangeReceiver() }
-
-    private var screenManager = ScreenManager.getInstance()
-    var videoDisplay: VideoDisplay? = null
-    var videoMenuDisplay: VideoMenuDisplay? = null
     private lateinit var reviewManager : ReviewManager
 
     var readPermission: Boolean = true
@@ -238,7 +210,6 @@ abstract class BaseActivity : AppCompatActivity(), ActivityView,
     }
 
     private var mBarcode = ""
-    var aidlUltiT2mini : AidlUtil? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -249,7 +220,7 @@ abstract class BaseActivity : AppCompatActivity(), ActivityView,
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             WebView.enableSlowWholeDocumentDraw()
         }
-        showDangerousPermissionsWithPermissionCheck()
+//        showDangerousPermissionsWithPermissionCheck()
         createTypeface()
 
         // Tạo ActivityComponent và sử dụng lại cache ConfigPersistentComponent
@@ -263,14 +234,14 @@ abstract class BaseActivity : AppCompatActivity(), ActivityView,
         val configPersistentComponent = sComponentsMap.getOrPut(mActivityId) {// Default value.
             Timber.i("Creating new ConfigPersistentComponent id = %d", mActivityId)
 
-            val component = (applicationContext as CashierApplication).applicationComponent
+            val component = (applicationContext as Application).applicationComponent
 
             DaggerConfigPersistentComponent.builder().applicationComponent(component).build()
         }
 
         activityComponent = configPersistentComponent.activityComponent(ActivityModule(this))
 
-        animation.interpolator = interpolator
+//        animation.interpolator = interpolator
 
         reviewManager = ReviewManagerFactory.create(this@BaseActivity)
 
@@ -290,7 +261,7 @@ abstract class BaseActivity : AppCompatActivity(), ActivityView,
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
-        if(hasFocus && !(application as CashierApplication).showNavigationBar) hideSystemUI()
+        if(hasFocus && !(application as Application).showNavigationBar) hideSystemUI()
     }
 
     override fun onStart() {
@@ -352,20 +323,20 @@ abstract class BaseActivity : AppCompatActivity(), ActivityView,
             sComponentsMap.remove(mActivityId)
         }
 
-        animation.cancel()
+//        animation.cancel()
 
         unregisterNetworkChanges()
 
         stopService() // Unbind from the service
 
-        videoDisplay?.dismiss()
-        videoDisplay = null
-        videoMenuDisplay?.dismiss()
-        videoMenuDisplay = null
-        if (aidlUltiT2mini != null) {
-            aidlUltiT2mini!!.sendLCDDoubleString(preferencesHelper.getCurrentBranchName(),getString(R.string.xin_chao))
-            aidlUltiT2mini = null
-        }
+//        videoDisplay?.dismiss()
+//        videoDisplay = null
+//        videoMenuDisplay?.dismiss()
+//        videoMenuDisplay = null
+//        if (aidlUltiT2mini != null) {
+//            aidlUltiT2mini!!.sendLCDDoubleString(preferencesHelper.getCurrentBranchName(),getString(R.string.xin_chao))
+//            aidlUltiT2mini = null
+//        }
 
         mDisposables.clear()
 
@@ -430,74 +401,74 @@ abstract class BaseActivity : AppCompatActivity(), ActivityView,
                                  negative: String, negativeCallback: ((Any) -> Unit)?,
                                  neutral: String, neutralCallback: ((Any) -> Unit)?) {
 
-        val dialog = MaterialDialog(this)
-                .customView(R.layout.dialog_base_basic, noVerticalPadding = true)
-                .cornerRadius(20F)
-        dialog.btnClose.setOnClickListener {
-            dismissDialog()
-        }
-
-        dialog.tvTitle.text = title
-        dialog.tvContent.text = content
-
-        if (negative.isNotEmpty()) {
-            dialog.btnNegative.visibility = View.VISIBLE
-            dialog.btnNegative.text = negative
-            dialog.btnNegative.setOnClickListener {
-                negativeCallback?.let { it(dialog) }
-                dismissDialog()
-            }
-        } else dialog.btnNegative.visibility = View.GONE
-
-         if (neutral.isNotEmpty()) {
-             dialog.btnNeutral.visibility = View.VISIBLE
-             dialog.btnNeutral.text = neutral
-             dialog.btnNeutral.setOnClickListener {
-                 neutralCallback?.let { it(dialog) }
-                 dismissDialog()
-             }
-         } else dialog.btnNeutral.visibility = View.GONE
-
-        if (positive.isNotEmpty()) dialog.btnPositive.text = positive
-        dialog.btnPositive.setOnClickListener {
-            positiveCallback?.let { it(dialog) }
-            dismissDialog()
-        }
-        materialDialog = dialog
-        materialDialog?.show()
+//        val dialog = MaterialDialog(this)
+//                .customView(R.layout.dialog_base_basic, noVerticalPadding = true)
+//                .cornerRadius(20F)
+//        dialog.btnClose.setOnClickListener {
+//            dismissDialog()
+//        }
+//
+//        dialog.tvTitle.text = title
+//        dialog.tvContent.text = content
+//
+//        if (negative.isNotEmpty()) {
+//            dialog.btnNegative.visibility = View.VISIBLE
+//            dialog.btnNegative.text = negative
+//            dialog.btnNegative.setOnClickListener {
+//                negativeCallback?.let { it(dialog) }
+//                dismissDialog()
+//            }
+//        } else dialog.btnNegative.visibility = View.GONE
+//
+//         if (neutral.isNotEmpty()) {
+//             dialog.btnNeutral.visibility = View.VISIBLE
+//             dialog.btnNeutral.text = neutral
+//             dialog.btnNeutral.setOnClickListener {
+//                 neutralCallback?.let { it(dialog) }
+//                 dismissDialog()
+//             }
+//         } else dialog.btnNeutral.visibility = View.GONE
+//
+//        if (positive.isNotEmpty()) dialog.btnPositive.text = positive
+//        dialog.btnPositive.setOnClickListener {
+//            positiveCallback?.let { it(dialog) }
+//            dismissDialog()
+//        }
+//        materialDialog = dialog
+//        materialDialog?.show()
     }
 
     override fun showDialogInput(inputType: Int, title: String, content: String, hint: String, prefill: String,
                                  positive: String, positiveCallback: ((Any) -> Unit)?) {
 
-        val dialog = MaterialDialog(this)
-                .customView(R.layout.dialog_base_input, noVerticalPadding = true)
-                .cornerRadius(16f)
-        dialog.imgRemove.setOnClickListener {
-            dialog.dismiss()
-        }
-        dialog.tvTitle.text = title
-        dialog.tvTitleInput.text = content
-        dialog.edtInput.setText(prefill)
-        dialog.btnApply.isEnabled = !prefill.isBlank()
-        dialog.edtInput.hint = hint
-        dialog.edtInput.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(p0: Editable?) {}
-
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                dialog.btnApply.isEnabled = !p0.isNullOrBlank()
-            }
-        })
-        dialog.btnApply.setOnClickListener {
-            if (positiveCallback != null) {
-                positiveCallback(dialog.edtInput.text)
-            }
-            dialog.dismiss()
-        }
-        materialDialog = dialog
-        dialog.show()
+//        val dialog = MaterialDialog(this)
+//                .customView(R.layout.dialog_base_input, noVerticalPadding = true)
+//                .cornerRadius(16f)
+//        dialog.imgRemove.setOnClickListener {
+//            dialog.dismiss()
+//        }
+//        dialog.tvTitle.text = title
+//        dialog.tvTitleInput.text = content
+//        dialog.edtInput.setText(prefill)
+//        dialog.btnApply.isEnabled = !prefill.isBlank()
+//        dialog.edtInput.hint = hint
+//        dialog.edtInput.addTextChangedListener(object : TextWatcher {
+//            override fun afterTextChanged(p0: Editable?) {}
+//
+//            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+//
+//            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+//                dialog.btnApply.isEnabled = !p0.isNullOrBlank()
+//            }
+//        })
+//        dialog.btnApply.setOnClickListener {
+//            if (positiveCallback != null) {
+//                positiveCallback(dialog.edtInput.text)
+//            }
+//            dialog.dismiss()
+//        }
+//        materialDialog = dialog
+//        dialog.show()
     }
 
     override fun showDialogSingleChoice(title: String, collection: Collection<String>, defaultIndex: Int, isCancel: Boolean,
@@ -541,76 +512,76 @@ abstract class BaseActivity : AppCompatActivity(), ActivityView,
                                        neutral: String, neutralCallback: ((Any) -> Unit)?,
                                        cancelCallback: (() -> Unit)?) {
 
-        val mIndex = mutableListOf<Int>()
-        var mText = ""
-        var choosen = false
-
-        val dialog = MaterialDialog(this)
-                .customView(R.layout.dialog_base_multichoice, noVerticalPadding = true)
-                .cornerRadius(16f)
-        val rcView = dialog.view.findViewById<BaseRecycleView>(R.id.recyclerView)
-
-        val listItem = collection.mapIndexed { index, string -> ItemCheckBox(string) }
-        defaultIndex.forEach {
-            listItem[it].isCheck = true
-        }
-        val adapter = MultiChoiceAdapter(this)
-
-        rcView.adapter = adapter.setAdapter{ pos, check ->
-            listItem[pos].isCheck = check
-            choosen = true
-        }
-        rcView.initLinearLayoutManager(0, false)
-        adapter.list = listItem.toMutableList()
-
-        dialog.btnClose.setOnClickListener {
-            dismissDialog()
-        }
-
-        dialog.tvTitle.text = title
-
-        if (negative.isNotEmpty()) {
-            dialog.btnNegative.visibility = View.VISIBLE
-            dialog.btnNegative.text = negative
-            dialog.btnNegative.setOnClickListener {
-                negativeCallback?.let { it(dialog) }
-                dismissDialog()
-            }
-            
-        } else dialog.btnNegative.visibility = View.GONE
-
-        if (neutral.isNotEmpty()) {
-            dialog.btnNeutral.visibility = View.VISIBLE
-            dialog.btnNeutral.text = neutral
-            dialog.btnNeutral.setOnClickListener {
-                neutralCallback?.let { it(dialog) }
-                dismissDialog()
-            }
-        } else dialog.btnNeutral.visibility = View.GONE
-
-        if (positive.isNotEmpty()) dialog.btnPositive.text = positive
-        dialog.btnPositive.setOnClickListener {
-            val str = StringBuilder()
-            val chooseItemList = mutableListOf<ItemCheckBox>()
-            adapter.list.filterIsInstance<ItemCheckBox>().forEachIndexed { index, item ->
-                if (item.isCheck) {
-                    chooseItemList.add(item)
-                    mIndex.add(index)
-                }
-            }
-            chooseItemList.forEachIndexed { index, item ->
-                if (index != 0) {
-                    str.append(',')
-                    str.append('\n')
-                }
-                str.append(item.title)
-            }
-            mText = str.toString()
-            if (choosen) positiveCallback?.let { it(mIndex.toIntArray(), mText) }
-            dismissDialog()
-        }
-        materialDialog = dialog
-        materialDialog?.show()
+//        val mIndex = mutableListOf<Int>()
+//        var mText = ""
+//        var choosen = false
+//
+//        val dialog = MaterialDialog(this)
+//                .customView(R.layout.dialog_base_multichoice, noVerticalPadding = true)
+//                .cornerRadius(16f)
+//        val rcView = dialog.view.findViewById<BaseRecycleView>(R.id.recyclerView)
+//
+//        val listItem = collection.mapIndexed { index, string -> ItemCheckBox(string) }
+//        defaultIndex.forEach {
+//            listItem[it].isCheck = true
+//        }
+//        val adapter = MultiChoiceAdapter(this)
+//
+//        rcView.adapter = adapter.setAdapter{ pos, check ->
+//            listItem[pos].isCheck = check
+//            choosen = true
+//        }
+//        rcView.initLinearLayoutManager(0, false)
+//        adapter.list = listItem.toMutableList()
+//
+//        dialog.btnClose.setOnClickListener {
+//            dismissDialog()
+//        }
+//
+//        dialog.tvTitle.text = title
+//
+//        if (negative.isNotEmpty()) {
+//            dialog.btnNegative.visibility = View.VISIBLE
+//            dialog.btnNegative.text = negative
+//            dialog.btnNegative.setOnClickListener {
+//                negativeCallback?.let { it(dialog) }
+//                dismissDialog()
+//            }
+//
+//        } else dialog.btnNegative.visibility = View.GONE
+//
+//        if (neutral.isNotEmpty()) {
+//            dialog.btnNeutral.visibility = View.VISIBLE
+//            dialog.btnNeutral.text = neutral
+//            dialog.btnNeutral.setOnClickListener {
+//                neutralCallback?.let { it(dialog) }
+//                dismissDialog()
+//            }
+//        } else dialog.btnNeutral.visibility = View.GONE
+//
+//        if (positive.isNotEmpty()) dialog.btnPositive.text = positive
+//        dialog.btnPositive.setOnClickListener {
+//            val str = StringBuilder()
+//            val chooseItemList = mutableListOf<ItemCheckBox>()
+//            adapter.list.filterIsInstance<ItemCheckBox>().forEachIndexed { index, item ->
+//                if (item.isCheck) {
+//                    chooseItemList.add(item)
+//                    mIndex.add(index)
+//                }
+//            }
+//            chooseItemList.forEachIndexed { index, item ->
+//                if (index != 0) {
+//                    str.append(',')
+//                    str.append('\n')
+//                }
+//                str.append(item.title)
+//            }
+//            mText = str.toString()
+//            if (choosen) positiveCallback?.let { it(mIndex.toIntArray(), mText) }
+//            dismissDialog()
+//        }
+//        materialDialog = dialog
+//        materialDialog?.show()
 
     }
 
@@ -693,20 +664,20 @@ abstract class BaseActivity : AppCompatActivity(), ActivityView,
     }
 
     override fun showDialogProgress(title: String, content: String, isHorizontal: Boolean, isCancelTouchOutside : Boolean) {
-        dismissDialog()
-        if (this.hasWindowFocus()) {
-            val builder = MaterialDialog(this)
-                    .customView(R.layout.partial_progress_sync, noVerticalPadding = true)
-                    .cornerRadius(16f)
-                    .cancelOnTouchOutside(isCancelTouchOutside)
-            val titleSetupData = builder.view.findViewById<TextView>(R.id.title_setup_data)
-            titleSetupData.text = title
-            val titlePleaseWait = builder.view.findViewById<TextView>(R.id.title_please_wait)
-            titlePleaseWait.text = content
-            materialDialog = builder
-            materialDialog?.show()
-
-        }
+//        dismissDialog()
+//        if (this.hasWindowFocus()) {
+//            val builder = MaterialDialog(this)
+//                    .customView(R.layout.partial_progress_sync, noVerticalPadding = true)
+//                    .cornerRadius(16f)
+//                    .cancelOnTouchOutside(isCancelTouchOutside)
+//            val titleSetupData = builder.view.findViewById<TextView>(R.id.title_setup_data)
+//            titleSetupData.text = title
+//            val titlePleaseWait = builder.view.findViewById<TextView>(R.id.title_please_wait)
+//            titlePleaseWait.text = content
+//            materialDialog = builder
+//            materialDialog?.show()
+//
+//        }
     }
 
     override fun showDialogProgressCircle(title: String, content: String, isCancelTouchOutside: Boolean) {
@@ -759,16 +730,16 @@ abstract class BaseActivity : AppCompatActivity(), ActivityView,
         negative: Int,
         negativeCallback: ((Any) -> Unit)?
     ) {
-        showDialogDelete(
-            title = getString(if (title != 0) title else R.string.xoa),
-            content = getString(if (content != 0) content else R.string.thong_bao_xoa_vat_the),
-            icon = ResourcesCompat.getDrawable(resources, icon ?: R.drawable.ic_delete_white_40dp, null),
-            cancelOnTouchSide = cancelOnTouchSide,
-            positive = getString(if (positive != 0) positive else R.string.xac_nhan),
-            positiveCallback = positiveCallback,
-            negative = getString(if (negative != 0) negative else R.string.huy),
-            negativeCallback = negativeCallback
-        )
+//        showDialogDelete(
+//            title = getString(if (title != 0) title else R.string.xoa),
+//            content = getString(if (content != 0) content else R.string.thong_bao_xoa_vat_the),
+//            icon = ResourcesCompat.getDrawable(resources, icon ?: R.drawable.ic_delete_white_40dp, null),
+//            cancelOnTouchSide = cancelOnTouchSide,
+//            positive = getString(if (positive != 0) positive else R.string.xac_nhan),
+//            positiveCallback = positiveCallback,
+//            negative = getString(if (negative != 0) negative else R.string.huy),
+//            negativeCallback = negativeCallback
+//        )
     }
 
     override fun showDialogDelete(
@@ -781,42 +752,41 @@ abstract class BaseActivity : AppCompatActivity(), ActivityView,
         negative: String,
         negativeCallback: ((Any) -> Unit)?
     ) {
-        val dialog = MaterialDialog(this)
-            .customView(R.layout.popup_delete_default_v2, noVerticalPadding = true)
-            .cancelOnTouchOutside(cancelOnTouchSide)
-            .cornerRadius(16f)
-
-        val titleView = dialog.view.findViewById<TextView>(R.id.tvTitle)
-        val contentView = dialog.view.findViewById<TextView>(R.id.tvContent)
-        val iconView = dialog.view.findViewById<ImageView>(R.id.imgIcon)
-        val negativeButton = dialog.view.findViewById<Button>(R.id.btnCancel)
-        val positiveButton = dialog.view.findViewById<Button>(R.id.btnConfirm)
-        val imgClose = dialog.view.findViewById<ImageView>(R.id.imgClose)
-
-        titleView.text = title
-        contentView.text = content
-        iconView.background = icon
-        imgClose.setOnClickListener {
-            dialog.dismiss()
-        }
-        negativeButton.text = negative
-        negativeButton.setOnClickListener {
-            negativeCallback?.let { it(dialog) }
-            dialog.dismiss()
-        }
-        positiveButton.text = positive
-        positiveButton.setOnClickListener {
-            positiveCallback?.let { it(dialog) }
-            dialog.dismiss()
-        }
-
-        materialDialog = dialog
-        materialDialog?.show()
+//        val dialog = MaterialDialog(this)
+//            .customView(R.layout.popup_delete_default_v2, noVerticalPadding = true)
+//            .cancelOnTouchOutside(cancelOnTouchSide)
+//            .cornerRadius(16f)
+//
+//        val titleView = dialog.view.findViewById<TextView>(R.id.tvTitle)
+//        val contentView = dialog.view.findViewById<TextView>(R.id.tvContent)
+//        val iconView = dialog.view.findViewById<ImageView>(R.id.imgIcon)
+//        val negativeButton = dialog.view.findViewById<Button>(R.id.btnCancel)
+//        val positiveButton = dialog.view.findViewById<Button>(R.id.btnConfirm)
+//        val imgClose = dialog.view.findViewById<ImageView>(R.id.imgClose)
+//
+//        titleView.text = title
+//        contentView.text = content
+//        iconView.background = icon
+//        imgClose.setOnClickListener {
+//            dialog.dismiss()
+//        }
+//        negativeButton.text = negative
+//        negativeButton.setOnClickListener {
+//            negativeCallback?.let { it(dialog) }
+//            dialog.dismiss()
+//        }
+//        positiveButton.text = positive
+//        positiveButton.setOnClickListener {
+//            positiveCallback?.let { it(dialog) }
+//            dialog.dismiss()
+//        }
+//
+//        materialDialog = dialog
+//        materialDialog?.show()
     }
 
     fun getBottomOrDialog(peekHeight: Int = R.dimen.bottom_sheet_height_300dp) = if(isWh960Screen()) MaterialDialog(this)
     else MaterialDialog(this, BottomSheet(LayoutMode.WRAP_CONTENT))
-            .setPeekHeight(peekHeight)
 
     override fun dismissDialog() {
         materialDialog?.dismiss()
@@ -865,7 +835,7 @@ abstract class BaseActivity : AppCompatActivity(), ActivityView,
         dismissSnackBar()
 
         mSnackBar = Snackbar.make(view, message, typeTime).setAction(actionName, onClickListener)
-        mSnackBar?.setActionTextColor(resources.getColor(R.color.colorSnackAction))
+        mSnackBar?.setActionTextColor(resources.getColor(R.color.primaryColor))
         mSnackBar?.show()
     }
 
@@ -1077,45 +1047,45 @@ abstract class BaseActivity : AppCompatActivity(), ActivityView,
                                             grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
-        onRequestPermissionsResult(requestCode, grantResults)
+//        onRequestPermissionsResult(requestCode, grantResults)
     }
 
-    @NeedsPermission(
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.CAMERA)
+//    @NeedsPermission(
+//            Manifest.permission.READ_EXTERNAL_STORAGE,
+//            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+//            Manifest.permission.CAMERA)
     override fun showDangerousPermissions() {
 
     }
 
-    @OnShowRationale(
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.CAMERA)
-    override fun showRationalForDangerousPermission(request: PermissionRequest) {
+//    @OnShowRationale(
+//            Manifest.permission.READ_EXTERNAL_STORAGE,
+//            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+//            Manifest.permission.CAMERA)
+    override fun showRationalForDangerousPermission() {
 
     }
 
-    @OnPermissionDenied(
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.CAMERA)
+//    @OnPermissionDenied(
+//            Manifest.permission.READ_EXTERNAL_STORAGE,
+//            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+//            Manifest.permission.CAMERA)
     override fun onDangerousPermissionDenied() {
 
     }
-
-    @OnNeverAskAgain(
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.CAMERA)
+//
+//    @OnNeverAskAgain(
+//            Manifest.permission.READ_EXTERNAL_STORAGE,
+//            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+//            Manifest.permission.CAMERA)
     override fun onDangerousPermissionNeverAskAgain() {
 
     }
-
-    @NeedsPermission(Manifest.permission.CAMERA)
-    override fun showCamera() {
-
-    }
+//
+//    @NeedsPermission(Manifest.permission.CAMERA)
+//    override fun showCamera() {
+//
+//    }
     //==========================================PERMISSION========================================//
 
     //============================================SERVICE=========================================//
@@ -1151,37 +1121,37 @@ abstract class BaseActivity : AppCompatActivity(), ActivityView,
     }
 
     override fun overridePendingSlideFromRigthToLeft() {
-        overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
+//        overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
     }
 
     override fun overridePendingSlideFromBottomToTop() {
-        overridePendingTransition(R.anim.slide_from_top, R.anim.slide_to_bottom)
+//        overridePendingTransition(R.anim.slide_from_top, R.anim.slide_to_bottom)
     }
 
     override fun overridePendingSlideFromRightToLeftFragment(fragmentTransaction: FragmentTransaction) {
-        fragmentTransaction.setCustomAnimations(
-                R.anim.slide_from_right,
-                R.anim.slide_to_left,
-                R.anim.slide_from_left,
-                R.anim.slide_to_right
-        )
+//        fragmentTransaction.setCustomAnimations(
+//                R.anim.slide_from_right,
+//                R.anim.slide_to_left,
+//                R.anim.slide_from_left,
+//                R.anim.slide_to_right
+//        )
     }
 
     override fun overridePendingSlideFromLeftToRight() {
-        overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+//        overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
     }
 
     override fun overridePendingSlideFromTopToBottom() {
-        overridePendingTransition(R.anim.slide_from_bottom, R.anim.slide_to_top)
+//        overridePendingTransition(R.anim.slide_from_bottom, R.anim.slide_to_top)
     }
 
     override fun overridePendingSlideFromLeftToRightFragment(fragmentTransaction: FragmentTransaction) {
-        fragmentTransaction.setCustomAnimations(
-                R.anim.slide_from_left,
-                R.anim.slide_to_right,
-                R.anim.slide_from_right,
-                R.anim.slide_to_left
-        )
+//        fragmentTransaction.setCustomAnimations(
+//                R.anim.slide_from_left,
+//                R.anim.slide_to_right,
+//                R.anim.slide_from_right,
+//                R.anim.slide_to_left
+//        )
     }
 
     //=================================ANIMATION WHEN CHANGE ACTIVITY=============================//
@@ -1216,8 +1186,8 @@ abstract class BaseActivity : AppCompatActivity(), ActivityView,
         if (isShow) {
             toolbar_etSearch?.addTextChangedListener(object : TextWatcher {
                 override fun afterTextChanged(s: Editable?) {
-                    if (s?.length ?: 0 == 1) toolbar_imgIconSearch?.setImageResource(R.drawable.ic_close_black_24dp)
-                    else if (s?.length ?: 0 == 0)  toolbar_imgIconSearch.setImageResource(R.drawable.ic_search_white_24dp_v2)
+//                    if (s?.length ?: 0 == 1) toolbar_imgIconSearch?.setImageResource(R.drawable.ic_close_black_24dp)
+//                    else if (s?.length ?: 0 == 0)  toolbar_imgIconSearch.setImageResource(R.drawable.ic_search_white_24dp_v2)
                 }
 
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -1250,11 +1220,11 @@ abstract class BaseActivity : AppCompatActivity(), ActivityView,
     override fun isWh960Screen() : Boolean = (resources.getInteger(R.integer.type_ui_screen) != 0)
     override fun isW960Screen() : Boolean = (resources.getInteger(R.integer.type_ui_screen) == 2)
 
-    override fun getHtmlPrint(jsonContent: JsonContent, typeHeader: String,
-                              code: String, number: String): String {
-        return PrintService.getHtmlPrintCustom(this, preferencesHelper, dataManager,
-                jsonContent, typeHeader, code, number, preferencesHelper.getHtmlPrint())
-    }
+//    override fun getHtmlPrint(jsonContent: JsonContent, typeHeader: String,
+//                              code: String, number: String): String {
+//        return PrintService.getHtmlPrintCustom(this, preferencesHelper, dataManager,
+//                jsonContent, typeHeader, code, number, preferencesHelper.getHtmlPrint())
+//    }
 
     fun checkServiceInit() = ::cashiersService.isInitialized
 
@@ -1349,81 +1319,81 @@ abstract class BaseActivity : AppCompatActivity(), ActivityView,
     }
 
     override fun showDialogDateV2(enableFutureDate : Boolean?, listener : (Date) -> Unit){
-        val dialog = MaterialDialog(this)
-                .customView(R.layout.dialog_choose_date, noVerticalPadding = true, scrollable = true)
-                .cornerRadius(20f)
-
-        val calendarView = dialog.view.findViewById<DateRangeCalendarView>(R.id.calendar_View)
-        if (enableFutureDate == null) { // truong hop khong chon ngay qua khu
-            val maxTime = Calendar.getInstance()
-            maxTime.set(Calendar.YEAR, maxTime.getActualMaximum(Calendar.YEAR))
-            calendarView.setSelectableDateRange(Calendar.getInstance(), maxTime)
-        } else if (!enableFutureDate) {
-            val minTime = Calendar.getInstance()
-            minTime.time = Date(0)
-            calendarView.setSelectableDateRange(minTime, Calendar.getInstance())
-        } else {
-            val minTime = Calendar.getInstance()
-            minTime.time = Date(0)
-            val maxTime = Calendar.getInstance()
-            maxTime.set(Calendar.YEAR, maxTime.getActualMaximum(Calendar.YEAR))
-            calendarView.setSelectableDateRange(minTime, maxTime)
-        }
-        calendarView.setCalendarListener(object : CalendarListener {
-            override fun onDateRangeSelected(startDate: Calendar, endDate: Calendar) {}
-
-            override fun onFirstDateSelected(startDate: Calendar) {
-                listener(startDate.time)
-                dialog.dismiss()
-            }
-
-        })
-        dialog.show()
+//        val dialog = MaterialDialog(this)
+//                .customView(R.layout.dialog_choose_date, noVerticalPadding = true, scrollable = true)
+//                .cornerRadius(20f)
+//
+//        val calendarView = dialog.view.findViewById<DateRangeCalendarView>(R.id.calendar_View)
+//        if (enableFutureDate == null) { // truong hop khong chon ngay qua khu
+//            val maxTime = Calendar.getInstance()
+//            maxTime.set(Calendar.YEAR, maxTime.getActualMaximum(Calendar.YEAR))
+//            calendarView.setSelectableDateRange(Calendar.getInstance(), maxTime)
+//        } else if (!enableFutureDate) {
+//            val minTime = Calendar.getInstance()
+//            minTime.time = Date(0)
+//            calendarView.setSelectableDateRange(minTime, Calendar.getInstance())
+//        } else {
+//            val minTime = Calendar.getInstance()
+//            minTime.time = Date(0)
+//            val maxTime = Calendar.getInstance()
+//            maxTime.set(Calendar.YEAR, maxTime.getActualMaximum(Calendar.YEAR))
+//            calendarView.setSelectableDateRange(minTime, maxTime)
+//        }
+//        calendarView.setCalendarListener(object : CalendarListener {
+//            override fun onDateRangeSelected(startDate: Calendar, endDate: Calendar) {}
+//
+//            override fun onFirstDateSelected(startDate: Calendar) {
+//                listener(startDate.time)
+//                dialog.dismiss()
+//            }
+//
+//        })
+//        dialog.show()
     }
 
     override fun showDialogDateV2(startDate: Date?, endDate : Date?, enableFutureDate: Boolean, listener: (Date, Date) -> Unit) {
-        val dialog = MaterialDialog(this)
-                .customView(R.layout.dialog_choose_date, noVerticalPadding = true, scrollable = true)
-                .cornerRadius(20f)
-
-        val calendarView = dialog.view.findViewById<DateRangeCalendarView>(R.id.calendar_View)
-
-        val minTime = Calendar.getInstance()
-        minTime.time = Date(0)
-        val maxTime = Calendar.getInstance()
-        maxTime.set(Calendar.YEAR, maxTime.getMaximum(Calendar.YEAR))
-        if (!enableFutureDate) {
-            calendarView.setSelectableDateRange(minTime, Calendar.getInstance())
-        }
-        if (startDate != null) {
-            calendarView.setSelectableDateRange(startDate.convertToCalendar(),
-                    if (!enableFutureDate) Calendar.getInstance() else maxTime)
-            calendarView.setSelectedDateRange(startDate.convertToCalendar(), endDate?.convertToCalendar())
-        }
-        else {
-            if (endDate != null) {
-                calendarView.setSelectableDateRange(minTime, endDate.convertToCalendar())
-            }
-        }
-
-        calendarView.setCalendarListener(object : CalendarListener {
-            override fun onDateRangeSelected(startDate: Calendar, endDate: Calendar) {
-                listener(startDate.time,endDate.time)
-                dialog.dismiss()
-            }
-
-            override fun onFirstDateSelected(startDateCallBack : Calendar) {
-                if ((startDate != null && endDate != null)
-                        || (startDate == null && endDate == null)
-                        || (startDate == null && endDate != null)) {
-                    listener(startDateCallBack.time, startDateCallBack.time)
-                    dialog.dismiss()
-                }
-            }
-
-        })
-        materialDialog = dialog
-        dialog.show()
+//        val dialog = MaterialDialog(this)
+//                .customView(R.layout.dialog_choose_date, noVerticalPadding = true, scrollable = true)
+//                .cornerRadius(20f)
+//
+//        val calendarView = dialog.view.findViewById<DateRangeCalendarView>(R.id.calendar_View)
+//
+//        val minTime = Calendar.getInstance()
+//        minTime.time = Date(0)
+//        val maxTime = Calendar.getInstance()
+//        maxTime.set(Calendar.YEAR, maxTime.getMaximum(Calendar.YEAR))
+//        if (!enableFutureDate) {
+//            calendarView.setSelectableDateRange(minTime, Calendar.getInstance())
+//        }
+//        if (startDate != null) {
+//            calendarView.setSelectableDateRange(startDate.convertToCalendar(),
+//                    if (!enableFutureDate) Calendar.getInstance() else maxTime)
+//            calendarView.setSelectedDateRange(startDate.convertToCalendar(), endDate?.convertToCalendar())
+//        }
+//        else {
+//            if (endDate != null) {
+//                calendarView.setSelectableDateRange(minTime, endDate.convertToCalendar())
+//            }
+//        }
+//
+//        calendarView.setCalendarListener(object : CalendarListener {
+//            override fun onDateRangeSelected(startDate: Calendar, endDate: Calendar) {
+//                listener(startDate.time,endDate.time)
+//                dialog.dismiss()
+//            }
+//
+//            override fun onFirstDateSelected(startDateCallBack : Calendar) {
+//                if ((startDate != null && endDate != null)
+//                        || (startDate == null && endDate == null)
+//                        || (startDate == null && endDate != null)) {
+//                    listener(startDateCallBack.time, startDateCallBack.time)
+//                    dialog.dismiss()
+//                }
+//            }
+//
+//        })
+//        materialDialog = dialog
+//        dialog.show()
     }
 
     override fun slideUp(view: View) {
@@ -1443,31 +1413,31 @@ abstract class BaseActivity : AppCompatActivity(), ActivityView,
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onUpdateNavigationCount(event: BusEvent.UpdateNavigationMenuCount) {
-        try {
-            val count = event.count
-            if (count <= 0) {
-                drawerCountView?.text = "0"
-                drawerCountView?.visibility = View.GONE
-            } else {
-                val countStr = if (count >= 100) {
-                    "99+"
-                } else {
-                    "$count"
-                }
-                drawerCountView?.text = countStr
-                drawerCountView?.visibility = View.VISIBLE
-
-                animation.cancel()
-                drawerCountView?.startAnimation(animation)
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+    fun onUpdateNavigationCount() {
+//        try {
+//            val count = event.count
+//            if (count <= 0) {
+//                drawerCountView?.text = "0"
+//                drawerCountView?.visibility = View.GONE
+//            } else {
+//                val countStr = if (count >= 100) {
+//                    "99+"
+//                } else {
+//                    "$count"
+//                }
+//                drawerCountView?.text = countStr
+//                drawerCountView?.visibility = View.VISIBLE
+//
+//                animation.cancel()
+//                drawerCountView?.startAnimation(animation)
+//            }
+//        } catch (e: Exception) {
+//            e.printStackTrace()
+//        }
     }
 
     override fun showMessageCheckInternet() {
-        showToast(R.string.kiem_tra_ket_noi_internet, false, TOAST_ERROR)
+//        showToast(R.string.kiem_tra_ket_noi_internet, false, TOAST_ERROR)
     }
 
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
@@ -1494,16 +1464,16 @@ abstract class BaseActivity : AppCompatActivity(), ActivityView,
                     android.hardware.Camera.getNumberOfCameras() > 0
 
     override fun goScanActivity() {
-        if (checkCamera()) {
-            val integrator = IntentIntegrator(this)
-            integrator.captureActivity = ToolbarCaptureActivity::class.java
-            integrator.setPrompt(getString(R.string.quet_ma_barcode_hoac_qrcode))
-            integrator.setOrientationLocked(false)
-            integrator.setBeepEnabled(true)
-            integrator.initiateScan()
-        } else {
-            showToast(R.string.thong_bao_khong_ho_tro_camera,false, TOAST_WARNING)
-        }
+//        if (checkCamera()) {
+//            val integrator = IntentIntegrator(this)
+//            integrator.captureActivity = ToolbarCaptureActivity::class.java
+//            integrator.setPrompt(getString(R.string.quet_ma_barcode_hoac_qrcode))
+//            integrator.setOrientationLocked(false)
+//            integrator.setBeepEnabled(true)
+//            integrator.initiateScan()
+//        } else {
+//            showToast(R.string.thong_bao_khong_ho_tro_camera,false, TOAST_WARNING)
+//        }
     }
 
     override fun checkCameraPermission(): Boolean {
@@ -1517,7 +1487,8 @@ abstract class BaseActivity : AppCompatActivity(), ActivityView,
     }
 
     override fun checkDemoVNPay(): Boolean {
-        return preferencesHelper.getSessionSetting().currentRetailer.id == Constants.VNPAY_DEMO_CODE
+//        return preferencesHelper.getSessionSetting().currentRetailer.id == Constants.VNPAY_DEMO_CODE
+        return false
     }
 
     override fun getWidthItemProduct(): Int {
@@ -1528,152 +1499,152 @@ abstract class BaseActivity : AppCompatActivity(), ActivityView,
         return if (checkDemoVNPay()) 2 else 3
     }
 
-    override fun getWidthItemProductCustom(): Int {
-        return when (preferencesHelper.getMenuItemSize()) {
-            Constants.SMALL_SIZE_ITEM_MENU -> {
-                R.dimen.main_search_product_image_size_small
-            }
-            Constants.DEFAULT_SIZE_ITEM_MENU -> {
-                R.dimen.main_search_product_image_size
-            }
-            Constants.LARGE_SIZE_ITEM_MENU -> {
-                R.dimen.main_search_product_image_size_large
-            }
-            else -> R.dimen.main_search_product_image_size
-        }
-    }
+//    override fun getWidthItemProductCustom(): Int {
+//        return when (preferencesHelper.getMenuItemSize()) {
+//            Constants.SMALL_SIZE_ITEM_MENU -> {
+//                R.dimen.main_search_product_image_size_small
+//            }
+//            Constants.DEFAULT_SIZE_ITEM_MENU -> {
+//                R.dimen.main_search_product_image_size
+//            }
+//            Constants.LARGE_SIZE_ITEM_MENU -> {
+//                R.dimen.main_search_product_image_size_large
+//            }
+//            else -> R.dimen.main_search_product_image_size
+//        }
+//    }
 
     private fun initPresent() {
         if (!preferencesHelper.getUseTwoScreen()) return
 
-        screenManager.init(this)
-        var displays = screenManager.displays
-        if (displays.size > 1) {
-            val isOnline = (application as CashierApplication).isOnline
-            val setting = preferencesHelper.getSessionSetting().settings
-
-            if (isOnline && setting.linkPresent.isNotEmpty()) {
-                setting.linkPresent.let {
-                    videoDisplay     = VideoDisplay(this, displays[1], it, setting.isPresentVideo)
-                    videoMenuDisplay = VideoMenuDisplay(this, displays[1], it, setting.isPresentVideo)
-                }
-            } else {
-                val path = preferencesHelper.getBannerItem()
-                videoDisplay     = VideoDisplay(this, displays[1], path, false)
-                videoMenuDisplay = VideoMenuDisplay(this, displays[1], path, false)
-            }
-        }
-
-        if((application as CashierApplication).keepScreenOn) window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        aidlUltiT2mini = if (Build.MODEL == Constants.DEVICES_NAME_T2_MINI) {
-            AidlUtil.instance
-        } else null
-        if (aidlUltiT2mini != null) {
-            aidlUltiT2mini!!.sendLCDDoubleString(preferencesHelper.getCurrentBranchName(), getString(R.string.xin_chao))
-        } // init LCD
-    }
-
-    override fun display2ScreenPresent(serverEvents: ServerEvents, typeHeader: Int) {
-        if (!preferencesHelper.getUseTwoScreen()) return
-
-        mDisposables.add(
-                Observable.just(serverEvents.jsonContent)
-                        .map {
-                            if (it.orderDetails.isNotEmpty()) {
-                                val typeHeader = resources.getString(typeHeader)
-                                getHtmlPrint(it, typeHeader)
-                                        .replace(Constants.DEFAULT_FOOTER_POS365, "")
-                            }
-                            else ""
-                        }
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeOn(Schedulers.io())
-                        .subscribeBy(
-                                onNext = {
-                                    if (it.isEmpty())
-                                        showVideoDisplay()
-                                    else
-                                        showVideoMenuDisplay(it)
-
-
-                                },
-                                onError = {},
-                                onComplete = {}
-                        )
-        )
-//        serverEvents.jsonContent.let {
-//            if (it.orderDetails.isNotEmpty()) {
-//                val typeHeader = resources.getString(typeHeader)
-//                val html = getHtmlPrint(it, typeHeader)
-//                        .replace(Pos365Constants.DEFAULT_FOOTER_POS365, "")
+//        screenManager.init(this)
+//        var displays = screenManager.displays
+//        if (displays.size > 1) {
+//            val isOnline = (application as CashierApplication).isOnline
+//            val setting = preferencesHelper.getSessionSetting().settings
 //
-//                showVideoMenuDisplay(html)
+//            if (isOnline && setting.linkPresent.isNotEmpty()) {
+//                setting.linkPresent.let {
+//                    videoDisplay     = VideoDisplay(this, displays[1], it, setting.isPresentVideo)
+//                    videoMenuDisplay = VideoMenuDisplay(this, displays[1], it, setting.isPresentVideo)
+//                }
 //            } else {
-//                showVideoDisplay()
+//                val path = preferencesHelper.getBannerItem()
+//                videoDisplay     = VideoDisplay(this, displays[1], path, false)
+//                videoMenuDisplay = VideoMenuDisplay(this, displays[1], path, false)
 //            }
 //        }
+//
+//        if((application as CashierApplication).keepScreenOn) window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+//        aidlUltiT2mini = if (Build.MODEL == Constants.DEVICES_NAME_T2_MINI) {
+//            AidlUtil.instance
+//        } else null
+//        if (aidlUltiT2mini != null) {
+//            aidlUltiT2mini!!.sendLCDDoubleString(preferencesHelper.getCurrentBranchName(), getString(R.string.xin_chao))
+//        } // init LCD
     }
 
-    override fun showVideoDisplay() {
-        if (!preferencesHelper.getUseTwoScreen()) return
+//    override fun display2ScreenPresent(serverEvents: ServerEvents, typeHeader: Int) {
+//        if (!preferencesHelper.getUseTwoScreen()) return
+//
+//        mDisposables.add(
+//                Observable.just(serverEvents.jsonContent)
+//                        .map {
+//                            if (it.orderDetails.isNotEmpty()) {
+//                                val typeHeader = resources.getString(typeHeader)
+//                                getHtmlPrint(it, typeHeader)
+//                                        .replace(Constants.DEFAULT_FOOTER_POS365, "")
+//                            }
+//                            else ""
+//                        }
+//                        .observeOn(AndroidSchedulers.mainThread())
+//                        .subscribeOn(Schedulers.io())
+//                        .subscribeBy(
+//                                onNext = {
+//                                    if (it.isEmpty())
+//                                        showVideoDisplay()
+//                                    else
+//                                        showVideoMenuDisplay(it)
+//
+//
+//                                },
+//                                onError = {},
+//                                onComplete = {}
+//                        )
+//        )
+////        serverEvents.jsonContent.let {
+////            if (it.orderDetails.isNotEmpty()) {
+////                val typeHeader = resources.getString(typeHeader)
+////                val html = getHtmlPrint(it, typeHeader)
+////                        .replace(Pos365Constants.DEFAULT_FOOTER_POS365, "")
+////
+////                showVideoMenuDisplay(html)
+////            } else {
+////                showVideoDisplay()
+////            }
+////        }
+//    }
 
-        if (videoDisplay != null && videoDisplay?.isShow == false) {
-            videoDisplay?.show()
-        }
+    override fun showVideoDisplay() {
+//        if (!preferencesHelper.getUseTwoScreen()) return
+//
+//        if (videoDisplay != null && videoDisplay?.isShow == false) {
+//            videoDisplay?.show()
+//        }
     }
 
     override fun showVideoMenuDisplay(html: String) {
         if (!preferencesHelper.getUseTwoScreen()) return
 
-        if (videoMenuDisplay != null && videoMenuDisplay?.isShow == false) {
-            videoMenuDisplay?.show()
-            videoMenuDisplay?.update(html)
-        } else {
-            if (null != videoMenuDisplay) {
-                videoMenuDisplay?.update(html)
-            } else {
-
-            }
-        }
+//        if (videoMenuDisplay != null && videoMenuDisplay?.isShow == false) {
+//            videoMenuDisplay?.show()
+//            videoMenuDisplay?.update(html)
+//        } else {
+//            if (null != videoMenuDisplay) {
+//                videoMenuDisplay?.update(html)
+//            } else {
+//
+//            }
+//        }
     }
 
     override fun displayLCDDoubleString(isShow: Boolean, title: String, total: Double) {
-        if (aidlUltiT2mini == null) return
-        val totalString = total.numberFormat().plus(preferencesHelper.getCurrencyUnit())
-        if (isShow) {
-            if (title.length > 16 || totalString.length > 16) {
-                val stringDisplay = title.plus("\n").plus(totalString)
-                val bitmap = stringDisplay.drawTextToBitmap()
-                if (bitmap != null) {
-                    val bitmapScale = Bitmap.createScaledBitmap(bitmap, 128, 40, false)
-                    aidlUltiT2mini!!.sendLCDBitmap(bitmapScale)
-                }
-            } else aidlUltiT2mini!!.sendLCDDoubleString(title, totalString)
-        } else {
-            aidlUltiT2mini!!.sendLCDDoubleString(preferencesHelper.getCurrentBranchName(), getString(R.string.xin_chao))
-        }
+//        if (aidlUltiT2mini == null) return
+//        val totalString = total.numberFormat().plus(preferencesHelper.getCurrencyUnit())
+//        if (isShow) {
+//            if (title.length > 16 || totalString.length > 16) {
+//                val stringDisplay = title.plus("\n").plus(totalString)
+//                val bitmap = stringDisplay.drawTextToBitmap()
+//                if (bitmap != null) {
+//                    val bitmapScale = Bitmap.createScaledBitmap(bitmap, 128, 40, false)
+//                    aidlUltiT2mini!!.sendLCDBitmap(bitmapScale)
+//                }
+//            } else aidlUltiT2mini!!.sendLCDDoubleString(title, totalString)
+//        } else {
+//            aidlUltiT2mini!!.sendLCDDoubleString(preferencesHelper.getCurrentBranchName(), getString(R.string.xin_chao))
+//        }
     }
 
     override fun showQRCodeSecondScreen(qrCode: Bitmap?, isShow: Boolean, accountId : Int?) {
-        if (!preferencesHelper.getUseTwoScreen()) return
-        if (videoMenuDisplay != null) {
-            videoMenuDisplay?.show()
-            if (isShow) {
-                videoMenuDisplay?.showQRCode(qrCode,accountId)
-            } else {
-                videoMenuDisplay?.hideQRCode()
-            }
-        }
-        if (isShow) {
-            if (aidlUltiT2mini != null && qrCode != null) {
-                val bitmapScale = Bitmap.createScaledBitmap(qrCode, 40, 40, false)
-                aidlUltiT2mini!!.sendLCDBitmap(bitmapScale)
-            }
-        } else {
-            if (aidlUltiT2mini != null) {
-                aidlUltiT2mini!!.sendLCDCommand(4)
-            }
-        }
+//        if (!preferencesHelper.getUseTwoScreen()) return
+//        if (videoMenuDisplay != null) {
+//            videoMenuDisplay?.show()
+//            if (isShow) {
+//                videoMenuDisplay?.showQRCode(qrCode,accountId)
+//            } else {
+//                videoMenuDisplay?.hideQRCode()
+//            }
+//        }
+//        if (isShow) {
+//            if (aidlUltiT2mini != null && qrCode != null) {
+//                val bitmapScale = Bitmap.createScaledBitmap(qrCode, 40, 40, false)
+//                aidlUltiT2mini!!.sendLCDBitmap(bitmapScale)
+//            }
+//        } else {
+//            if (aidlUltiT2mini != null) {
+//                aidlUltiT2mini!!.sendLCDCommand(4)
+//            }
+//        }
     }
 
     @SuppressLint("InlinedApi")
@@ -1699,7 +1670,7 @@ abstract class BaseActivity : AppCompatActivity(), ActivityView,
 
     @SuppressLint("InlinedApi")
     fun checkDialogSystemUI() {
-        if ((application as CashierApplication).showNavigationBar) return
+        if ((application as Application).showNavigationBar) return
         val visibility = View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
                 View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
                 View.SYSTEM_UI_FLAG_FULLSCREEN
@@ -1710,133 +1681,133 @@ abstract class BaseActivity : AppCompatActivity(), ActivityView,
 
     // for Restaurant App
 
-    fun showDialogAccount(accounts: List<Account>, indexDefault: Int, actionChoose : (Account) -> Unit) {
-        val dialog = MaterialDialog(this)
-                .customView(R.layout.popup_account_change, noVerticalPadding = true)
-                .cornerRadius(16f)
-        dialog.btnCloseDialog.setOnClickListener {
-            dialog.dismiss()
-        }
-        dialog.radioGroup.removeAllViews()
-        accounts.forEach {
-            val radioButton = getAccountRadioButton(it, indexDefault)
-            dialog.radioGroup.addView(radioButton)
-            val layoutParams = RadioGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            layoutParams.bottomMargin = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5F, resources.displayMetrics).toInt()
-            radioButton.layoutParams = layoutParams
-        }
-
-        dialog.radioGroup.check(indexDefault)
-
-        dialog.btnApply.setOnClickListener {
-            val idChoose = dialog.radioGroup.checkedRadioButtonId
-            actionChoose(accounts.firstOrNull { it.id == idChoose } ?: Account(name = getString(R.string.tien_mat)))
-            dialog.dismiss()
-        }
-        materialDialog = dialog
-        dialog.show()
-    }
-
-    private fun getAccountRadioButton(account: Account, indexDefault: Int): RadioButton {
-        val radioButton = LayoutInflater.from(this).inflate(R.layout.radio_button_channel, null) as RadioButton
-        radioButton.id = account.id ?: 0
-
-        if (account.id ?: 0 == indexDefault) radioButton.isChecked = true
-        when (account.id) {
-            0 -> {
-                val drawable = resources?.getDrawable(R.drawable.ic_money_dark_sea_blue_40dp)
-                radioButton.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
-                radioButton.text = account.name
-            }
-            Constants.ACCOUNT_ID_PAY_CARD -> {
-                val drawable = resources?.getDrawable(R.drawable.ic_vnpaypos_origin_40dp)
-                radioButton.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
-
-                val charSequenceName = "VNPAYpos"
-                val spannableName = SpannableString(charSequenceName)
-                spannableName.setSpan(ForegroundColorSpan(Color.parseColor("#004a9c")),2,5,0)
-                radioButton.text = spannableName
-                radioButton.setTextColor(Color.parseColor("#e50019"))
-            }
-
-            Constants.ACCOUNT_ID_BARCODE -> {
-                val drawable = resources?.getDrawable(R.drawable.ic_vnpayqr_origin_40dp)
-                radioButton.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
-
-                val charSequenceName = "VNPAYqr"
-                val spannableName = SpannableString(charSequenceName)
-                spannableName.setSpan(ForegroundColorSpan(Color.parseColor("#004a9c")),2,5,0)
-                radioButton.text = spannableName
-                radioButton.setTextColor(Color.parseColor("#e50019"))
-            }
-
-            else -> {
-                val drawable = resources?.getDrawable(R.drawable.ic_grid_dark_sea_blue_40dp)
-                radioButton.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
-                radioButton.text = account.name
-            }
-        }
-
-        return radioButton
-    }
-
-    fun showPopupPrintWaitingList() {
-        val dialog = MaterialDialog(this)
-                .customView(R.layout.popup_print_waiting,noVerticalPadding = true)
-                .cornerRadius(16f)
-        val title = dialog.view.tvTitle
-        val dismiss = dialog.view.btnClose
-        val recycler = dialog.view.recycleList
-        val btnPrintAll = dialog.view.btnPrintAll
-        val btnDeleteAll = dialog.view.btnDeleteAll
-        val adapter = printWaitingAdapter.setListener(
-                deleteItem = { index, printData ->
-                    dataManager.deleteWaitingPrintData(printData.id)
-                },
-                clickItem = { index, printData -> },
-                print = { index, printData ->
-                    if (dataManager.deleteWaitingPrintData(printData.id)) {
-                        printService.startActionEnqueuePrint(this, mutableListOf(printData))//in xong xoa
-                    }
-                }
-        )
-        title.text = getString(R.string.danh_sach_lenh_in_loi)
-        dismiss.setOnClickListener {
-            dialog.dismiss()
-        }
-        btnPrintAll.setOnClickListener {
-            val waitingPrints = dataManager.getWaitingPrintData().value
-            if (waitingPrints != null) {
-                dataManager.deleteAllWaitingPrintData()
-                printService.startActionEnqueuePrint(this, waitingPrints!!)
-            }
-        }
-        btnDeleteAll.setOnClickListener {
-            dataManager.deleteAllWaitingPrintData()
-        }
-        recycler.adapter = adapter
-        recycler.initLinearLayoutManager(0,false)
-
-        val disposable = dataManager.getWaitingPrintData()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribeBy(
-                        onNext = {
-                            adapter.list = it.toMutableList()
-                            title.text = "${getString(R.string.danh_sach_lenh_in_loi)} (${it.size})"
-                        },
-                        onComplete = {},
-                        onError = {}
-                )
-
-        dialog.setOnDismissListener {
-            disposable.dispose()
-        }
-
-        materialDialog = dialog
-        checkDialogSystemUI()
-        materialDialog?.show()
-    }
+//    fun showDialogAccount(accounts: List<Account>, indexDefault: Int, actionChoose : (Account) -> Unit) {
+//        val dialog = MaterialDialog(this)
+//                .customView(R.layout.popup_account_change, noVerticalPadding = true)
+//                .cornerRadius(16f)
+//        dialog.btnCloseDialog.setOnClickListener {
+//            dialog.dismiss()
+//        }
+//        dialog.radioGroup.removeAllViews()
+//        accounts.forEach {
+//            val radioButton = getAccountRadioButton(it, indexDefault)
+//            dialog.radioGroup.addView(radioButton)
+//            val layoutParams = RadioGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+//            layoutParams.bottomMargin = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5F, resources.displayMetrics).toInt()
+//            radioButton.layoutParams = layoutParams
+//        }
+//
+//        dialog.radioGroup.check(indexDefault)
+//
+//        dialog.btnApply.setOnClickListener {
+//            val idChoose = dialog.radioGroup.checkedRadioButtonId
+//            actionChoose(accounts.firstOrNull { it.id == idChoose } ?: Account(name = getString(R.string.tien_mat)))
+//            dialog.dismiss()
+//        }
+//        materialDialog = dialog
+//        dialog.show()
+//    }
+//
+//    private fun getAccountRadioButton(account: Account, indexDefault: Int): RadioButton {
+//        val radioButton = LayoutInflater.from(this).inflate(R.layout.radio_button_channel, null) as RadioButton
+//        radioButton.id = account.id ?: 0
+//
+//        if (account.id ?: 0 == indexDefault) radioButton.isChecked = true
+//        when (account.id) {
+//            0 -> {
+//                val drawable = resources?.getDrawable(R.drawable.ic_money_dark_sea_blue_40dp)
+//                radioButton.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
+//                radioButton.text = account.name
+//            }
+//            Constants.ACCOUNT_ID_PAY_CARD -> {
+//                val drawable = resources?.getDrawable(R.drawable.ic_vnpaypos_origin_40dp)
+//                radioButton.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
+//
+//                val charSequenceName = "VNPAYpos"
+//                val spannableName = SpannableString(charSequenceName)
+//                spannableName.setSpan(ForegroundColorSpan(Color.parseColor("#004a9c")),2,5,0)
+//                radioButton.text = spannableName
+//                radioButton.setTextColor(Color.parseColor("#e50019"))
+//            }
+//
+//            Constants.ACCOUNT_ID_BARCODE -> {
+//                val drawable = resources?.getDrawable(R.drawable.ic_vnpayqr_origin_40dp)
+//                radioButton.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
+//
+//                val charSequenceName = "VNPAYqr"
+//                val spannableName = SpannableString(charSequenceName)
+//                spannableName.setSpan(ForegroundColorSpan(Color.parseColor("#004a9c")),2,5,0)
+//                radioButton.text = spannableName
+//                radioButton.setTextColor(Color.parseColor("#e50019"))
+//            }
+//
+//            else -> {
+//                val drawable = resources?.getDrawable(R.drawable.ic_grid_dark_sea_blue_40dp)
+//                radioButton.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
+//                radioButton.text = account.name
+//            }
+//        }
+//
+//        return radioButton
+//    }
+//
+//    fun showPopupPrintWaitingList() {
+//        val dialog = MaterialDialog(this)
+//                .customView(R.layout.popup_print_waiting,noVerticalPadding = true)
+//                .cornerRadius(16f)
+//        val title = dialog.view.tvTitle
+//        val dismiss = dialog.view.btnClose
+//        val recycler = dialog.view.recycleList
+//        val btnPrintAll = dialog.view.btnPrintAll
+//        val btnDeleteAll = dialog.view.btnDeleteAll
+//        val adapter = printWaitingAdapter.setListener(
+//                deleteItem = { index, printData ->
+//                    dataManager.deleteWaitingPrintData(printData.id)
+//                },
+//                clickItem = { index, printData -> },
+//                print = { index, printData ->
+//                    if (dataManager.deleteWaitingPrintData(printData.id)) {
+//                        printService.startActionEnqueuePrint(this, mutableListOf(printData))//in xong xoa
+//                    }
+//                }
+//        )
+//        title.text = getString(R.string.danh_sach_lenh_in_loi)
+//        dismiss.setOnClickListener {
+//            dialog.dismiss()
+//        }
+//        btnPrintAll.setOnClickListener {
+//            val waitingPrints = dataManager.getWaitingPrintData().value
+//            if (waitingPrints != null) {
+//                dataManager.deleteAllWaitingPrintData()
+//                printService.startActionEnqueuePrint(this, waitingPrints!!)
+//            }
+//        }
+//        btnDeleteAll.setOnClickListener {
+//            dataManager.deleteAllWaitingPrintData()
+//        }
+//        recycler.adapter = adapter
+//        recycler.initLinearLayoutManager(0,false)
+//
+//        val disposable = dataManager.getWaitingPrintData()
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribeOn(Schedulers.io())
+//                .subscribeBy(
+//                        onNext = {
+//                            adapter.list = it.toMutableList()
+//                            title.text = "${getString(R.string.danh_sach_lenh_in_loi)} (${it.size})"
+//                        },
+//                        onComplete = {},
+//                        onError = {}
+//                )
+//
+//        dialog.setOnDismissListener {
+//            disposable.dispose()
+//        }
+//
+//        materialDialog = dialog
+//        checkDialogSystemUI()
+//        materialDialog?.show()
+//    }
 
     override fun showRateApp() {
         val request = reviewManager.requestReviewFlow()
@@ -1861,13 +1832,13 @@ abstract class BaseActivity : AppCompatActivity(), ActivityView,
     }
 
     override fun checkAndGoAppStore() {
-        if ((application as CashierApplication).isNewestVersion) return
-        (application as CashierApplication).isNewestVersion = true //just call once
+        if ((application as Application).isNewestVersion) return
+        (application as Application).isNewestVersion = true //just call once
         showDialogBasic(
-                R.string.phien_ban_moi_kha_dung,
-                R.string.thong_bao_cap_nhat_phien_ban_moi,
+                "phien_ban_moi_kha_dung",
+                "thong_bao_cap_nhat_phien_ban_moi",
                 true,
-                R.string.dong_y,
+                "dong_y",
                 positiveCallback = {
                     try {
                         startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$packageName")))
@@ -1875,11 +1846,11 @@ abstract class BaseActivity : AppCompatActivity(), ActivityView,
                         startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$packageName")))
                     }
                 },
-                negative = R.string.huy_bo)
+                negative = "huy_bo")
     }
 
     override fun checkPermission(permission: String) {
-        if (preferencesHelper.getCurrentUser().isAdmin) return
+//        if (preferencesHelper.getCurrentUser().isAdmin) return
 
         createPermission = false
         updatePermission = false
@@ -1889,53 +1860,53 @@ abstract class BaseActivity : AppCompatActivity(), ActivityView,
         viewCostPermission = false
         updateCostPermission = false
 
-        mDisposables.add(
-                Observable.fromIterable(dataManager.getPermissionFollowGroup(permission))
-                        .map {
-                            when(it){
-                                PermissionMap.CAN_CREATE -> createPermission = true
-                                PermissionMap.CAN_UPDATE -> updatePermission = true
-                                PermissionMap.CAN_DELETE -> deletePermission = true
-                                PermissionMap.CAN_IMPORT -> importPermission = true
-                                PermissionMap.CAN_EXPORT -> exportPermission = true
-                                PermissionMap.CAN_VIEW_COST -> viewCostPermission = true
-                                PermissionMap.CAN_UPDATE_COST -> updateCostPermission = true
-                            }
-                            it
-                        }
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeOn(Schedulers.io())
-                        .subscribeBy(
-                                onNext = {
-                                },
-                                onComplete = {
-                                },
-                                onError = {
-                                }
-                        )
-        )
+//        mDisposables.add(
+//                Observable.fromIterable(dataManager.getPermissionFollowGroup(permission))
+//                        .map {
+//                            when(it){
+//                                PermissionMap.CAN_CREATE -> createPermission = true
+//                                PermissionMap.CAN_UPDATE -> updatePermission = true
+//                                PermissionMap.CAN_DELETE -> deletePermission = true
+//                                PermissionMap.CAN_IMPORT -> importPermission = true
+//                                PermissionMap.CAN_EXPORT -> exportPermission = true
+//                                PermissionMap.CAN_VIEW_COST -> viewCostPermission = true
+//                                PermissionMap.CAN_UPDATE_COST -> updateCostPermission = true
+//                            }
+//                            it
+//                        }
+//                        .observeOn(AndroidSchedulers.mainThread())
+//                        .subscribeOn(Schedulers.io())
+//                        .subscribeBy(
+//                                onNext = {
+//                                },
+//                                onComplete = {
+//                                },
+//                                onError = {
+//                                }
+//                        )
+//        )
     }
 
     override fun checkReadPermissionFlowGroup(permission: String) {
-        if (preferencesHelper.getCurrentUser().isAdmin) return
-        else {
-            readPermission = false
-            if (dataManager.isReadPermissionFollowGroup(permission)) readPermission = true
-        }
+//        if (preferencesHelper.getCurrentUser().isAdmin) return
+//        else {
+//            readPermission = false
+//            if (dataManager.isReadPermissionFollowGroup(permission)) readPermission = true
+//        }
     }
 
     override fun showNetworkStatus(status: Int) {
     }
 
     override fun setPrintServ() {
-        try {
-            val webView = findViewById<WebView>(R.id.webPrint)
-            if (webView == null || preferencesHelper.getPrintHiddenMode())
-                printService.setWebview(webPrint, null)
-            else
-                printService.setWebview(webView, layout_webprint)
-        } catch (e: Exception) { }
+//        try {
+//            val webView = findViewById<WebView>(R.id.webPrint)
+//            if (webView == null || preferencesHelper.getPrintHiddenMode())
+//                printService.setWebview(webPrint, null)
+//            else
+//                printService.setWebview(webView, layout_webprint)
+//        } catch (e: Exception) { }
     }
 
-    override fun getPrintServ() = printService
+//    override fun getPrintServ() = printService
 }

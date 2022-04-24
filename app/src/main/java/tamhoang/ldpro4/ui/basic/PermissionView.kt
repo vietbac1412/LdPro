@@ -1,7 +1,5 @@
 package tamhoang.ldpro4.ui.basic
 
-import permissions.dispatcher.PermissionRequest
-
 /**
  * @author  : Pos365
  * @Skype   : chukimmuoi
@@ -14,7 +12,7 @@ import permissions.dispatcher.PermissionRequest
 interface PermissionView {
     fun showDangerousPermissions()
 
-    fun showRationalForDangerousPermission(request: PermissionRequest)
+    fun showRationalForDangerousPermission()
 
     fun onDangerousPermissionDenied()
 

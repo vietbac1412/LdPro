@@ -14,8 +14,6 @@ import androidx.fragment.app.FragmentTransaction
 import com.google.android.material.snackbar.Snackbar
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog
-import tamhoang.ldpro4.data.model.JsonContent
-import tamhoang.ldpro4.data.model.ServerEvents
 import tamhoang.ldpro4pos365.ui.basic.fragment.BaseFragment
 import java.util.*
 
@@ -428,7 +426,7 @@ interface ActivityView : PermissionView {
     fun isWh960Screen() : Boolean
     fun isW960Screen() : Boolean
 
-    fun getHtmlPrint(jsonContent: JsonContent, typeHeader: String, code: String = "", number: String = "") : String
+//    fun getHtmlPrint(jsonContent: JsonContent, typeHeader: String, code: String = "", number: String = "") : String
 
     fun registerNetworkBroadcastForNougat()
 
@@ -460,7 +458,7 @@ interface ActivityView : PermissionView {
     fun goScanActivity()
     fun checkCameraPermission(): Boolean
 
-    fun showCamera()
+//    fun showCamera()
 
     fun onBackPressedV2()
     fun onBackPressedV3()
@@ -472,7 +470,7 @@ interface ActivityView : PermissionView {
     fun getWidthItemProduct(): Int
     fun getCountColumnProduct(): Int
 
-    fun display2ScreenPresent(serverEvents: ServerEvents, typeHeader: Int)
+//    fun display2ScreenPresent(serverEvents: ServerEvents, typeHeader: Int)
 
     fun showVideoDisplay()
     fun showVideoMenuDisplay(html: String)
@@ -482,7 +480,7 @@ interface ActivityView : PermissionView {
 
     fun showRateApp()
     fun checkAndGoAppStore()
-    fun getWidthItemProductCustom() : Int
+//    fun getWidthItemProductCustom() : Int
 
     fun checkPermission(permission: String)
     fun checkReadPermissionFlowGroup(permission: String)
@@ -492,5 +490,5 @@ interface ActivityView : PermissionView {
     fun showNetworkStatus(status : Int)
 
     fun setPrintServ()
-    fun getPrintServ(): PrintService
+//    fun getPrintServ(): PrintService
 }

@@ -14,7 +14,7 @@ import android.widget.MultiAutoCompleteTextView
  * @Project : CashiersPos365
  * Created by chukimmuoi on 11/22/18.
  */
-class QuickAutoComplete : MultiAutoCompleteTextView {
+class QuickAutoComplete : androidx.appcompat.widget.AppCompatMultiAutoCompleteTextView {
 
     constructor(context: Context) : super(context)
 

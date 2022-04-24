@@ -32,16 +32,8 @@ import kotlin.math.pow
 fun ImageView.loadImage(url: String) {
     Glide.with(context)
             .load(url)
-            .placeholder(when {
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> R.drawable.bg_image_product
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH -> R.drawable.bg_image_product_19
-                else -> R.color.white
-            })
-            .error(when {
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> R.drawable.bg_image_product
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH -> R.drawable.bg_image_product_19
-                else -> R.color.white
-            })
+            .placeholder(R.color.white)
+            .error(R.color.white)
             .centerCrop()
             .into(this)
 }
@@ -57,8 +49,8 @@ fun ImageView.loadImage(url: String, drawableError: Drawable) {
     } else {
         Glide.with(context)
                 .load(url)
-                .placeholder(if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) R.drawable.bg_image_product_19 else  R.color.white)
-                .error(if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) R.drawable.bg_image_product_19 else  R.color.white)
+                .placeholder(R.color.white)
+                .error(R.color.white)
                 .centerCrop()
                 .into(this)
     }

@@ -155,8 +155,4 @@ abstract class BaseFragment : Fragment(), FragmentView {
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
         return false
     }
-
-    override fun getPrintServ(): PrintService {
-        return baseActivity.getPrintServ()
-    }
 }

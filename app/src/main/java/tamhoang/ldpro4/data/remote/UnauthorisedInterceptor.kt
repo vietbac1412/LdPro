@@ -32,7 +32,7 @@ class UnauthorisedInterceptor(context: Context,
     @Inject lateinit var eventBus: EventBus
 
     init {
-        Application.get(context).applicationComponent.inject(this)
+//        Application.get(context).applicationComponent.inject(this)
     }
 
     @Throws(IOException::class)

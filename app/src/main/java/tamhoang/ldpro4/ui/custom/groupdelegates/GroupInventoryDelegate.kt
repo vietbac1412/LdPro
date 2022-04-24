@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate
 import kotlinx.android.synthetic.main.item_group_order.view.*
 import tamhoang.ldpro4.R
-import tamhoang.ldpro4.data.model.GroupInventory
 import tamhoang.ldpro4.util.extension.convertToStringDateFormat
 
 class GroupInventoryDelegate(val activity: Activity) : AdapterDelegate<List<Any>>() {
@@ -21,35 +20,35 @@ class GroupInventoryDelegate(val activity: Activity) : AdapterDelegate<List<Any>
     }
 
     override fun isForViewType(items: List<Any>, position: Int): Boolean {
-        return items[position] is GroupInventory
+        return true
     }
 
     override fun onBindViewHolder(items: List<Any>, position: Int, holder: RecyclerView.ViewHolder,
                                   payloads: MutableList<Any>) {
         val viewHolder = holder as ViewHolder
-        val order = items[position] as GroupInventory
+//        val order = items[position] as GroupInventory
 
-        viewHolder.binOrder(order)
+        viewHolder.binOrder()
     }
 
     inner class ViewHolder(val view: View)
         : RecyclerView.ViewHolder(view) {
-        init {
-            view.tvTimeView.isSelected = true
-            view.tvCountOrdersView.isSelected = true
-        }
+//        init {
+//            view.tvTimeView.isSelected = true
+//            view.tvCountOrdersView.isSelected = true
+//        }
 
-        fun binOrder(paymentData: GroupInventory) {
-            with(paymentData) {
-
-                view.tvTimeView.text = date.convertToStringDateFormat()
-
-                val suffix = activity.resources.getString(R.string.phieu_kiem_ke).toLowerCase()
-                val countDisplay = "${if (count < 10) "0" else ""}$count $suffix"
-
-                view.tvCountOrdersView.text = countDisplay
-
-            }
+        fun binOrder() {
+//            with(paymentData) {
+//
+//                view.tvTimeView.text = date.convertToStringDateFormat()
+//
+//                val suffix = activity.resources.getString(R.string.phieu_kiem_ke).toLowerCase()
+//                val countDisplay = "${if (count < 10) "0" else ""}$count $suffix"
+//
+//                view.tvCountOrdersView.text = countDisplay
+//
+//            }
         }
     }
 }

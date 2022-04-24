@@ -3,11 +3,7 @@ package tamhoang.ldpro4.util.extension
 import android.graphics.*
 import android.text.TextPaint
 import android.util.Base64
-import com.google.zxing.BarcodeFormat
-import com.google.zxing.MultiFormatWriter
-import com.google.zxing.WriterException
 import com.journeyapps.barcodescanner.BarcodeEncoder
-import tamhoang.ldpro4.data.model.Numbers
 import java.io.UnsupportedEncodingException
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
@@ -53,26 +49,26 @@ fun String.isNetworkConnected(): Boolean {
 }
 
 fun String.generateBarcode(): Bitmap? {
-    val multiFormatWriter = MultiFormatWriter()
-    try {
-        val bitMatrix = multiFormatWriter.encode(this, BarcodeFormat.QR_CODE, 200, 200)
-        val barcodeEncoder = BarcodeEncoder()
-        return barcodeEncoder.createBitmap(bitMatrix)
-    } catch (e: WriterException) {
-        e.printStackTrace()
-    }
+//    val multiFormatWriter = MultiFormatWriter()
+//    try {
+//        val bitMatrix = multiFormatWriter.encode(this, BarcodeFormat.QR_CODE, 200, 200)
+//        val barcodeEncoder = BarcodeEncoder()
+//        return barcodeEncoder.createBitmap(bitMatrix)
+//    } catch (e: WriterException) {
+//        e.printStackTrace()
+//    }
     return null
 }
 
 fun String.generateBarcode128(): Bitmap? {
-    val multiFormatWriter = MultiFormatWriter()
-    try {
-        val bitMatrix = multiFormatWriter.encode(this, BarcodeFormat.CODE_128, 200, 50)
-        val barcodeEncoder = BarcodeEncoder()
-        return barcodeEncoder.createBitmap(bitMatrix)
-    } catch (e: WriterException) {
-        e.printStackTrace()
-    }
+//    val multiFormatWriter = MultiFormatWriter()
+//    try {
+//        val bitMatrix = multiFormatWriter.encode(this, BarcodeFormat.CODE_128, 200, 50)
+//        val barcodeEncoder = BarcodeEncoder()
+//        return barcodeEncoder.createBitmap(bitMatrix)
+//    } catch (e: WriterException) {
+//        e.printStackTrace()
+//    }
     return null
 }
 
@@ -126,24 +122,24 @@ fun String.acronym(): String {
 fun String.splitCalculation(): String {
     var output = ""
     var count  = 0
-    this.trim().split("").reversed().forEach {
-        if (it == Numbers.N0.value || it == Numbers.N1.value
-                || it == Numbers.N2.value || it == Numbers.N3.value
-                || it == Numbers.N4.value || it == Numbers.N5.value
-                || it == Numbers.N6.value || it == Numbers.N7.value
-                || it == Numbers.N8.value || it == Numbers.N9.value) {
-            output += if (count == 3) {
-                count = 1
-                ",$it"
-            } else {
-                count += 1
-                it
-            }
-        } else {
-            output += it
-            count = 0
-        }
-    }
+//    this.trim().split("").reversed().forEach {
+//        if (it == Numbers.N0.value || it == Numbers.N1.value
+//                || it == Numbers.N2.value || it == Numbers.N3.value
+//                || it == Numbers.N4.value || it == Numbers.N5.value
+//                || it == Numbers.N6.value || it == Numbers.N7.value
+//                || it == Numbers.N8.value || it == Numbers.N9.value) {
+//            output += if (count == 3) {
+//                count = 1
+//                ",$it"
+//            } else {
+//                count += 1
+//                it
+//            }
+//        } else {
+//            output += it
+//            count = 0
+//        }
+//    }
 
     return output.reversed()
 }

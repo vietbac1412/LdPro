@@ -21,10 +21,10 @@ class BaseSwipeRefreshLayout : SwipeRefreshLayout {
     constructor(context: Context, attributeSet: AttributeSet) : super(context, attributeSet)
 
     init {
-        setColorSchemeResources(
-                R.color.colorSwipeBlue,
-                R.color.colorSwipeGreen,
-                R.color.colorSwipeOrange,
-                R.color.colorSwipeRed)
+//        setColorSchemeResources(
+//                R.color.colorSwipeBlue,
+//                R.color.colorSwipeGreen,
+//                R.color.colorSwipeOrange,
+//                R.color.colorSwipeRed)
     }
 }

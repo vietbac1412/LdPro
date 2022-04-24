@@ -6,7 +6,6 @@ import timber.log.Timber
 import tamhoang.ldpro4.R
 import tamhoang.ldpro4.data.constants.Constants
 import tamhoang.ldpro4.data.model.*
-import tamhoang.ldpro4.print.PrintType
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -190,7 +189,7 @@ constructor(private val mPref: SharedPreferences) {
         if (VERSION > getVersion()) {
             //set default value auto print setting
             if (getVersion() < 3) {
-                putBoolean(PREF_AUTO_PRINT_COOK, android.os.Build.MODEL in listOf(Constants.DEVICES_NAME_T2, Constants.DEVICES_NAME_T2_MINI, Constants.DEVICES_NAME_T2_PRO, Constants.DEVICES_NAME_T1))
+                putBoolean(PREF_AUTO_PRINT_COOK, android.os.Build.MODEL in listOf(""))
             }
             //
             putVersion(VERSION)
@@ -225,14 +224,14 @@ constructor(private val mPref: SharedPreferences) {
         mEdit.commit()
     }
 
-    fun putHostName(value: String) = putString(PREF_HOST_NAME, value.plus(getLastHostName()))
+    fun putHostName(value: String) = putString(PREF_HOST_NAME, value.plus("getLastHostName()"))
     fun getHostName(): String = getString(PREF_HOST_NAME, VALUE_HOST_NAME_DEFAULT)
 
     fun putSessionId(value: String) = putString(PREF_SESSION_ID, value)
     fun getSessionId(): String = getString(PREF_SESSION_ID, "")
 
     fun putAppId(value: String) = putString(PREF_APP_ID, value)
-    fun getAppId(): String = getString(PREF_APP_ID, Constants.APP_CASHIER_ID)
+    fun getAppId(): String = getString(PREF_APP_ID, "Constants.APP_CASHIER_ID")
 
     fun putUserName(value: String) = putString(PREF_USER_NAME, value)
     fun getUserName(): String = getString(PREF_USER_NAME, "")
@@ -250,17 +249,17 @@ constructor(private val mPref: SharedPreferences) {
     fun getTypeSyncGateway() = getString(PREF_TYPE_SYNC_GATEWAY, setIpDefault())
 
     fun putPrintInformationName(value: String) = putString(PREF_PRINT_INFORMATION_NAME, value)
-    fun getPrintInformationNameRetailer() = getString(PREF_PRINT_INFORMATION_NAME, getCurrentRetailer().name)
+    fun getPrintInformationNameRetailer() = getString(PREF_PRINT_INFORMATION_NAME, "")
     fun getPrintInformationName() = getString(PREF_PRINT_INFORMATION_NAME, getCurrentBranchName())
     fun putPrintInformationImage(value: String) = putString(PREF_PRINT_INFORMATION_IMAGE, value)
     fun getPrintInformationImage() = getString(PREF_PRINT_INFORMATION_IMAGE, "")
     fun putPrintInformationAddress(value: String) = putString(PREF_PRINT_INFORMATION_ADDRESS, value)
-    fun getPrintInformationAddress() = getString(PREF_PRINT_INFORMATION_ADDRESS, getCurrentRetailer().address)
+    fun getPrintInformationAddress() = getString(PREF_PRINT_INFORMATION_ADDRESS,"")
     fun putPrintInformationPhone(value: String) = putString(PREF_PRINT_INFORMATION_PHONE, value)
-    fun getPrintInformationPhone() = getString(PREF_PRINT_INFORMATION_PHONE, getCurrentRetailer().phone)
+    fun getPrintInformationPhone() = getString(PREF_PRINT_INFORMATION_PHONE, "")
     fun putPrintInformationFooter(value: String) = putString(PREF_PRINT_INFORMATION_FOOTER, value)
     fun getPrintInformationFooter(resources: Resources) =
-            getString(PREF_PRINT_INFORMATION_FOOTER, resources.getString(R.string.cam_on_hen_gap_lai))
+            getString(PREF_PRINT_INFORMATION_FOOTER, "")
     fun getPrintInformationFooter() =
             getString(PREF_PRINT_INFORMATION_FOOTER, "")
 
@@ -295,13 +294,13 @@ constructor(private val mPref: SharedPreferences) {
 
     fun getUseTwoScreen() = getBoolean(PREF_USE_TWO_SCREEN, false)
 
-    fun getCurrentBranchId(): Int = getSessionSetting().currentBranchId
+//    fun getCurrentBranchId(): Int = getSessionSetting().currentBranchId
 
-    fun getKeyOffBranch() = PREF_CURRENT_OFF_BRANCH_ID.format(getCurrentRetailer().id, getCurrentUser().id)
-    fun putCurrentBranchOffId(value: Int) {
-        val offKeyBranch = getKeyOffBranch()
-        if (offKeyBranch != PREF_BRANCH_OFF_KEY_DEFAULT) { putInt(getKeyOffBranch(), value) }
-    }
+//    fun getKeyOffBranch() = PREF_CURRENT_OFF_BRANCH_ID.format(getCurrentRetailer().id, getCurrentUser().id)
+//    fun putCurrentBranchOffId(value: Int) {
+//        val offKeyBranch = getKeyOffBranch()
+//        if (offKeyBranch != PREF_BRANCH_OFF_KEY_DEFAULT) { putInt(getKeyOffBranch(), value) }
+//    }
     fun getCurrentBranchOffId() = mPref.all
             .filter { it.key.startsWith(PREF_BRANCH_OFF_KEY_START_DEFAULT) }
             .toList()
@@ -315,182 +314,184 @@ constructor(private val mPref: SharedPreferences) {
     fun getFieldIdBranch(): Int = getInt(PREF_FIELD_ID_BRANCH, -1)
     fun putFieldIdBranch(value: Int) = putInt(PREF_FIELD_ID_BRANCH, value)
 
-    fun putSessionSetting(value: Session) {
-        putCurrentBranchOffId(value.currentBranchId)
-        putString(PREF_SESSION_SETTING, value.toString())
-    }
-    fun getSessionSetting(): Session {
-        val content = getString(PREF_SESSION_SETTING, Session().toString())
-        return Session.convertStringToObject(content)
-    }
+//    fun putSessionSetting(value: Session) {
+//        putCurrentBranchOffId(value.currentBranchId)
+//        putString(PREF_SESSION_SETTING, value.toString())
+//    }
+//    fun getSessionSetting(): Session {
+//        val content = getString(PREF_SESSION_SETTING, Session().toString())
+//        return Session.convertStringToObject(content)
+//    }
 
-    fun getChannels(): MutableList<Channel> {
-        val channels = mutableListOf<Channel>()
-        val channelsAddition = getSessionSetting().channels
-        channels.add(Channel(id = 1, name = "Bán hàng trực tiếp"))
-        channels.add(Channel(id = 2, name = "Bán qua điện thoại"))
-        channels.add(Channel(id = 3, name = "GrabFood"))
-        channels.add(Channel(id = 4, name = "Now"))
-        channels.add(Channel(id = 5, name = "Pasgo"))
-        channels.add(Channel(id = 6, name = "Go-Viet"))
-        channels.add(Channel(id = 7, name = "Facebook"))
-        channels.addAll(channelsAddition)
-        return channels
-    }
+//    fun getChannels(): MutableList<Channel> {
+//        val channels = mutableListOf<Channel>()
+//        val channelsAddition = getSessionSetting().channels
+//        channels.add(Channel(id = 1, name = "Bán hàng trực tiếp"))
+//        channels.add(Channel(id = 2, name = "Bán qua điện thoại"))
+//        channels.add(Channel(id = 3, name = "GrabFood"))
+//        channels.add(Channel(id = 4, name = "Now"))
+//        channels.add(Channel(id = 5, name = "Pasgo"))
+//        channels.add(Channel(id = 6, name = "Go-Viet"))
+//        channels.add(Channel(id = 7, name = "Facebook"))
+//        channels.addAll(channelsAddition)
+//        return channels
+//    }
 
-    fun putPrinterSetting(value: Printer365) {
-        putString(PREF_PRINTER_SETTING, value.toString())
-    }
-    fun getPrinterSetting(): Printer365 {
-        val content = getString(PREF_PRINTER_SETTING, Printer365().toString())
-        return Printer365.convertStringToObject(content)
-    }
-    fun putPrintCookCache(value: PrintCookCache) {
-        putString(PREF_PRINT_COOK_CACHE, value.toString())
-    }
-    fun getPrintCookCache(): PrintCookCache {
-        val content = getString(PREF_PRINT_COOK_CACHE, PrintCookCache().toString())
-        return PrintCookCache.convertStringToObject(content)
-    }
-
-    fun getCurrentUser() = getSessionSetting().currentUser
-    fun getCurrentRetailer() = getSessionSetting().currentRetailer
-
-    fun putCurrencyUnit(value: String) = putString(PREF_CURRENCY_UNIT, value)
-    fun getCurrencyUnit(): String = getString(PREF_CURRENCY_UNIT, Constants.CURRENCY_UNIT_VIETNAME)
-    fun checkCurrencyVnd() = getCurrencyUnit() == Constants.CURRENCY_UNIT_VIETNAME
-
-    fun putSelfOrderType(value: Int) = putInt(PREF_SCREEN_SELF_ORDER_TYPE, value)
-    fun getSelfOrderType(): Int = getInt(PREF_SCREEN_SELF_ORDER_TYPE, SelfOrderType.PAGE.value)
-
-    fun putHtmlPrint(value: String) = putString(PREF_PRINT_HTML, value)
-    fun getHtmlPrint(): String = getString(PREF_PRINT_HTML, Constants.HTML_PRINT_DEFAULT)
-
-    fun putHtmlPrintCook(value: String) = putString(PREF_PRINT_HTML_COOK, value)
-    fun putHtmlPrintPartner(value: String) = putString(PREF_PRINT_HTML_PARTNER, value)
-    fun putHtmlPrintVoucher(value: String) = putString(PREF_PRINT_VOUCHER_HTML, value)
-    fun getHtmlPrintCook(): String = getString(PREF_PRINT_HTML_COOK, Constants.HTML_PRINT_COOK_DEFAULT)
-    fun getHtmlPrintPartner(): String = getString(PREF_PRINT_PARTNER_HTML,Constants.HTML_PRINT_CUSTOMER)
-    fun getHtmlPrintVoucher(): String = getString(PREF_PRINT_VOUCHER_HTML,Constants.HTML_PRINT_VOUCHER)
-    fun putTempPrint(value: String) = putString(PREF_PRINT_TEMP, value)
-    fun getTempPrint(): String = getString(PREF_PRINT_TEMP, Constants.TEMP_PRINT_DEFAULT)
-
-    fun clearAll() {
-        mEdit.clear()
-        mEdit.commit()
-    }
-
-    fun clear() {
-        putSessionId("")
-        putSessionSetting(Session())
-        putUserPassword("")
-        putLatestSync("")
-    }
-
-    fun getPrinterWaitForConfirmation(printerName: String = "") : Printer {
-        val print365 = getPrinterSetting()
-        return when(printerName) {
-            Constants.PRINT_KITCHEN_A -> print365.kitchenA
-            Constants.PRINT_KITCHEN_B -> print365.kitchenB
-            Constants.PRINT_KITCHEN_C -> print365.kitchenC
-            Constants.PRINT_KITCHEN_D -> print365.kitchenD
-            Constants.PRINT_BARTENDER_A -> print365.bartenderA
-            Constants.PRINT_BARTENDER_B -> print365.bartenderB
-            Constants.PRINT_BARTENDER_C -> print365.bartenderC
-            Constants.PRINT_BARTENDER_D -> print365.bartenderD
-            Constants.PRINT_TEMP -> print365.temp
-            else -> print365.cashier
-        }
-    }
-
-    fun getMessagePrintFail(resources: Resources, printer: Printer = Printer()) : String {
-        return when(printer.id) {
-            PrintType.NO_PRINT.value -> {
-                resources.getString(R.string.thiet_lap_khong_in)
-            }
-            PrintType.LOCAL_PRINT.value -> {
-                resources.getString(R.string.chon_thiet_lap_tich_hop_may_in_local)
-            }
-            PrintType.LAN_PRINT.value -> {
-                String.format(
-                        resources.getString(R.string.kiem_tra_ket_noi_may_in),
-                        printer.value
-                )
-            }
-            PrintType.BLUETOOTH_PRINT.value -> {
-                String.format(
-                        resources.getString(R.string.kiem_tra_ket_noi_bluetooth),
-                        printer.value
-                )
-            }
-            PrintType.USB_PRINT.value -> {
-                String.format(
-                        resources.getString(R.string.kiem_tra_ket_noi_may_in_usb),
-                        printer.value
-                )
-            }
-            else -> {
-                resources.getString(R.string.chon_thiet_lap_tich_hop_may_in_local)
-            }
-        }
-    }
-
+//    fun putPrinterSetting(value: Printer365) {
+//        putString(PREF_PRINTER_SETTING, value.toString())
+//    }
+//    fun getPrinterSetting(): Printer365 {
+//        val content = getString(PREF_PRINTER_SETTING, Printer365().toString())
+//        return Printer365.convertStringToObject(content)
+//    }
+//    fun putPrintCookCache(value: PrintCookCache) {
+//        putString(PREF_PRINT_COOK_CACHE, value.toString())
+//    }
+//    fun getPrintCookCache(): PrintCookCache {
+//        val content = getString(PREF_PRINT_COOK_CACHE, PrintCookCache().toString())
+//        return PrintCookCache.convertStringToObject(content)
+//    }
+//
+//    fun getCurrentUser() = getSessionSetting().currentUser
+//    fun getCurrentRetailer() = getSessionSetting().currentRetailer
+//
+//    fun putCurrencyUnit(value: String) = putString(PREF_CURRENCY_UNIT, value)
+//    fun getCurrencyUnit(): String = getString(PREF_CURRENCY_UNIT, Constants.CURRENCY_UNIT_VIETNAME)
+//    fun checkCurrencyVnd() = getCurrencyUnit() == Constants.CURRENCY_UNIT_VIETNAME
+//
+//    fun putSelfOrderType(value: Int) = putInt(PREF_SCREEN_SELF_ORDER_TYPE, value)
+//    fun getSelfOrderType(): Int = getInt(PREF_SCREEN_SELF_ORDER_TYPE, SelfOrderType.PAGE.value)
+//
+//    fun putHtmlPrint(value: String) = putString(PREF_PRINT_HTML, value)
+//    fun getHtmlPrint(): String = getString(PREF_PRINT_HTML, Constants.HTML_PRINT_DEFAULT)
+//
+//    fun putHtmlPrintCook(value: String) = putString(PREF_PRINT_HTML_COOK, value)
+//    fun putHtmlPrintPartner(value: String) = putString(PREF_PRINT_HTML_PARTNER, value)
+//    fun putHtmlPrintVoucher(value: String) = putString(PREF_PRINT_VOUCHER_HTML, value)
+//    fun getHtmlPrintCook(): String = getString(PREF_PRINT_HTML_COOK, Constants.HTML_PRINT_COOK_DEFAULT)
+//    fun getHtmlPrintPartner(): String = getString(PREF_PRINT_PARTNER_HTML,Constants.HTML_PRINT_CUSTOMER)
+//    fun getHtmlPrintVoucher(): String = getString(PREF_PRINT_VOUCHER_HTML,Constants.HTML_PRINT_VOUCHER)
+//    fun putTempPrint(value: String) = putString(PREF_PRINT_TEMP, value)
+//    fun getTempPrint(): String = getString(PREF_PRINT_TEMP, Constants.TEMP_PRINT_DEFAULT)
+//
+//    fun clearAll() {
+//        mEdit.clear()
+//        mEdit.commit()
+//    }
+//
+//    fun clear() {
+//        putSessionId("")
+//        putSessionSetting(Session())
+//        putUserPassword("")
+//        putLatestSync("")
+//    }
+//
+//    fun getPrinterWaitForConfirmation(printerName: String = "") : Printer {
+//        val print365 = getPrinterSetting()
+//        return when(printerName) {
+//            Constants.PRINT_KITCHEN_A -> print365.kitchenA
+//            Constants.PRINT_KITCHEN_B -> print365.kitchenB
+//            Constants.PRINT_KITCHEN_C -> print365.kitchenC
+//            Constants.PRINT_KITCHEN_D -> print365.kitchenD
+//            Constants.PRINT_BARTENDER_A -> print365.bartenderA
+//            Constants.PRINT_BARTENDER_B -> print365.bartenderB
+//            Constants.PRINT_BARTENDER_C -> print365.bartenderC
+//            Constants.PRINT_BARTENDER_D -> print365.bartenderD
+//            Constants.PRINT_TEMP -> print365.temp
+//            else -> print365.cashier
+//        }
+//    }
+//
+//    fun getMessagePrintFail(resources: Resources, printer: Printer = Printer()) : String {
+//        return when(printer.id) {
+//            PrintType.NO_PRINT.value -> {
+//                resources.getString(R.string.thiet_lap_khong_in)
+//            }
+//            PrintType.LOCAL_PRINT.value -> {
+//                resources.getString(R.string.chon_thiet_lap_tich_hop_may_in_local)
+//            }
+//            PrintType.LAN_PRINT.value -> {
+//                String.format(
+//                        resources.getString(R.string.kiem_tra_ket_noi_may_in),
+//                        printer.value
+//                )
+//            }
+//            PrintType.BLUETOOTH_PRINT.value -> {
+//                String.format(
+//                        resources.getString(R.string.kiem_tra_ket_noi_bluetooth),
+//                        printer.value
+//                )
+//            }
+//            PrintType.USB_PRINT.value -> {
+//                String.format(
+//                        resources.getString(R.string.kiem_tra_ket_noi_may_in_usb),
+//                        printer.value
+//                )
+//            }
+//            else -> {
+//                resources.getString(R.string.chon_thiet_lap_tich_hop_may_in_local)
+//            }
+//        }
+//    }
+//
     fun isScreenRestaurant(): Boolean {
-
-        if (getFieldIdBranch() != -1)
-            return  getFieldIdBranch() == Constants.CURRENT_RETAILER_FIELD_FND_03 ||
-                    getFieldIdBranch() == Constants.CURRENT_RETAILER_FIELD_FND_11
-        else {
-            val session = getSessionSetting()
-            session.let {
-                val currentBranchSession = it.branchs.firstOrNull{ branchSession ->
-                    branchSession.id == it.currentBranchId
-                } ?: BranchSession()
-
-                val currentBranchFieldId = if(currentBranchSession.fieldId != -1) currentBranchSession.fieldId else it.currentRetailer.fieldId
-                putFieldIdBranch(currentBranchFieldId)
-                return currentBranchFieldId == Constants.CURRENT_RETAILER_FIELD_FND_03 ||
-                        currentBranchFieldId == Constants.CURRENT_RETAILER_FIELD_FND_11
-            }
-        }
+        return true
     }
+//
+//        if (getFieldIdBranch() != -1)
+//            return  getFieldIdBranch() == Constants.CURRENT_RETAILER_FIELD_FND_03 ||
+//                    getFieldIdBranch() == Constants.CURRENT_RETAILER_FIELD_FND_11
+//        else {
+//            val session = getSessionSetting()
+//            session.let {
+//                val currentBranchSession = it.branchs.firstOrNull{ branchSession ->
+//                    branchSession.id == it.currentBranchId
+//                } ?: BranchSession()
+//
+//                val currentBranchFieldId = if(currentBranchSession.fieldId != -1) currentBranchSession.fieldId else it.currentRetailer.fieldId
+//                putFieldIdBranch(currentBranchFieldId)
+//                return currentBranchFieldId == Constants.CURRENT_RETAILER_FIELD_FND_03 ||
+//                        currentBranchFieldId == Constants.CURRENT_RETAILER_FIELD_FND_11
+//            }
+//        }
+//    }
 
     fun isScreenShop() = !isScreenRestaurant()
 
     fun formatNameDB(): String {
         val typeScreen = if (isScreenShop()) "SHOP" else "RESTAURANT"
-        val output = "db$typeScreen${ getHostName() }(${ getCurrentBranchId() })"
+        val output = "db$typeScreen${ getHostName() })"
         Timber.e("DB NAME ---> $output")
         return output
     }
 
-    fun putSlideShow(value: SlideShow) {
-        putString(PREF_PRINT_INFORMATION_SLIDE_SHOW, value.toString())
-    }
-    fun getSlideShow(): SlideShow {
-        val content = getString(PREF_PRINT_INFORMATION_SLIDE_SHOW, SlideShow().toString())
-        return SlideShow.convertStringToObject(content)
-    }
-
-    fun putBanner(value: Banner) {
-        putString(PREF_PRINT_INFORMATION_BANNER, value.toString())
-    }
-    fun getBanner(): Banner {
-        val content = getString(PREF_PRINT_INFORMATION_BANNER, Banner().toString())
-        return Banner.convertStringToObject(content)
-    }
-    fun getBannerItem(): String {
-        val banners = getBanner().getList()
-
-        val number = (0..2).random()
-        var output =  when (number) {
-            0 -> banners[0]
-            1 -> banners[1]
-            else -> banners[0]
-        }
-        if (output.isNullOrEmpty()) output = Constants.BANNER_DEFAULT
-        return output
-    }
+//    fun putSlideShow(value: SlideShow) {
+//        putString(PREF_PRINT_INFORMATION_SLIDE_SHOW, value.toString())
+//    }
+//    fun getSlideShow(): SlideShow {
+//        val content = getString(PREF_PRINT_INFORMATION_SLIDE_SHOW, SlideShow().toString())
+//        return SlideShow.convertStringToObject(content)
+//    }
+//
+//    fun putBanner(value: Banner) {
+//        putString(PREF_PRINT_INFORMATION_BANNER, value.toString())
+//    }
+//    fun getBanner(): Banner {
+//        val content = getString(PREF_PRINT_INFORMATION_BANNER, Banner().toString())
+//        return Banner.convertStringToObject(content)
+//    }
+//    fun getBannerItem(): String {
+//        val banners = getBanner().getList()
+//
+//        val number = (0..2).random()
+//        var output =  when (number) {
+//            0 -> banners[0]
+//            1 -> banners[1]
+//            else -> banners[0]
+//        }
+//        if (output.isNullOrEmpty()) output = Constants.BANNER_DEFAULT
+//        return output
+//    }
 
     //----------------Ver 2------------------
     fun putSyncInformation(value : Boolean)    = putBoolean(PREF_SYNC_INFORMATION, value)
@@ -516,45 +517,45 @@ constructor(private val mPref: SharedPreferences) {
     fun getNotPrintZeroPrice() = getBoolean(PREF_NOT_PRINT_ZERO_PRICE, false)
     fun putNotPrintZeroPrice(value: Boolean) = putBoolean(PREF_NOT_PRINT_ZERO_PRICE, value)
 
-    fun getWithToPrint(): String {
-        val widthPrintDefault = when (android.os.Build.MODEL) {
-            Constants.DEVICES_NAME_V1S -> "58mm"
-            Constants.DEVICES_NAME_V2_PRO -> "58mm"
-            Constants.DEVICES_NAME_P1_4G_EU -> "58mm"
-            Constants.DEVICES_NAME_T1 -> "76mm"
-            Constants.DEVICES_NAME_T2 -> "76mm"
-            Constants.DEVICES_NAME_K1-> "76mm"
-            else -> "58mm"
-        }
-        return getString(PREF_WIDTH_TO_PRINT, widthPrintDefault)
-    }
+//    fun getWithToPrint(): String {
+//        val widthPrintDefault = when (android.os.Build.MODEL) {
+//            Constants.DEVICES_NAME_V1S -> "58mm"
+//            Constants.DEVICES_NAME_V2_PRO -> "58mm"
+//            Constants.DEVICES_NAME_P1_4G_EU -> "58mm"
+//            Constants.DEVICES_NAME_T1 -> "76mm"
+//            Constants.DEVICES_NAME_T2 -> "76mm"
+//            Constants.DEVICES_NAME_K1-> "76mm"
+//            else -> "58mm"
+//        }
+//        return getString(PREF_WIDTH_TO_PRINT, widthPrintDefault)
+//    }
     fun putWithToPrint(value: String) = putString(PREF_WIDTH_TO_PRINT, value)
 
     fun putCardNumberCount(value : Int)    = putInt(PREF_CARD_NUMBER_COUNT, value)
     fun getCardNumberCount()    = getInt(PREF_CARD_NUMBER_COUNT, 0)
 
-    fun isSunmiDevices() : Boolean {
-        val listSunmiDevices = listOf<String>(
-                Constants.DEVICES_NAME_V1S,
-                Constants.DEVICES_NAME_V2_PRO,
-                Constants.DEVICES_NAME_P1_4G_EU,
-                Constants.DEVICES_NAME_T1,
-                Constants.DEVICES_NAME_T2,
-                Constants.DEVICES_NAME_K1)
-        return  android.os.Build.MODEL in listSunmiDevices
-    }
-
-    fun canPayByCard(settingScreen: Boolean = false): Boolean {
-        val listSunmiDevices = listOf<String>(
-                Constants.DEVICES_NAME_P1_4G_EU,
-                Constants.DEVICES_NAME_P1_4G,
-                Constants.DEVICES_NAME_P2,
-                Constants.DEVICES_NAME_P2_PRO,
-                Constants.DEVICES_NAME_P2_LITE,
-                Constants.DEVICES_NAME_P2_MINI )
-        val canBySetting = settingScreen || getConnectPOS()
-        return  android.os.Build.MODEL in listSunmiDevices && canBySetting
-    }
+//    fun isSunmiDevices() : Boolean {
+//        val listSunmiDevices = listOf<String>(
+//                Constants.DEVICES_NAME_V1S,
+//                Constants.DEVICES_NAME_V2_PRO,
+//                Constants.DEVICES_NAME_P1_4G_EU,
+//                Constants.DEVICES_NAME_T1,
+//                Constants.DEVICES_NAME_T2,
+//                Constants.DEVICES_NAME_K1)
+//        return  android.os.Build.MODEL in listSunmiDevices
+//    }
+//
+//    fun canPayByCard(settingScreen: Boolean = false): Boolean {
+//        val listSunmiDevices = listOf<String>(
+//                Constants.DEVICES_NAME_P1_4G_EU,
+//                Constants.DEVICES_NAME_P1_4G,
+//                Constants.DEVICES_NAME_P2,
+//                Constants.DEVICES_NAME_P2_PRO,
+//                Constants.DEVICES_NAME_P2_LITE,
+//                Constants.DEVICES_NAME_P2_MINI )
+//        val canBySetting = settingScreen || getConnectPOS()
+//        return  android.os.Build.MODEL in listSunmiDevices && canBySetting
+//    }
 
     //----------------NOT SETTING-----------------
     fun putExtraExist(value : Boolean)    = putBoolean(PREF_EXTRA_EXIST, value)

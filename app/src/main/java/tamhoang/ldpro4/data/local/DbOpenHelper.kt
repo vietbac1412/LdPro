@@ -45,26 +45,26 @@ class DbOpenHelper
         try {
             db.execSQL("insert into android_metadata values ('en_us');")
 
-            db.execSQL(Room.CREATE_TABLE)
-            db.execSQL(RoomGroup.CREATE_TABLE)
-            db.execSQL(Categorie.CREATE_TABLE)
-            db.execSQL(Product.CREATE_TABLE)
-            db.execSQL(Product.CREATE_TABLE_TODAY)
-//            db.execSQL(Product.CREATE_UNIQUE)
-            db.execSQL(TreeView.CREATE_TABLE)
-            db.execSQL(Partner.CREATE_TABLE)
-
-            db.execSQL(ServerEvents.CREATE_TABLE)
-            db.execSQL(ServerEvents.CREATE_UNIQUE)
-
-            db.execSQL(PaymentData.CREATE_TABLE)
-            db.execSQL(RoomHistory.CREATE_TABLE)
-
-            db.execSQL(PayResult.CREATE_TABLE)
-
-            db.execSQL(Extra.CREATE_TABLE)
-
-            db.execSQL(ProductPromotion.CREATE_TABLE)
+//            db.execSQL(Room.CREATE_TABLE)
+//            db.execSQL(RoomGroup.CREATE_TABLE)
+//            db.execSQL(Categorie.CREATE_TABLE)
+//            db.execSQL(Product.CREATE_TABLE)
+//            db.execSQL(Product.CREATE_TABLE_TODAY)
+////            db.execSQL(Product.CREATE_UNIQUE)
+//            db.execSQL(TreeView.CREATE_TABLE)
+//            db.execSQL(Partner.CREATE_TABLE)
+//
+//            db.execSQL(ServerEvents.CREATE_TABLE)
+//            db.execSQL(ServerEvents.CREATE_UNIQUE)
+//
+//            db.execSQL(PaymentData.CREATE_TABLE)
+//            db.execSQL(RoomHistory.CREATE_TABLE)
+//
+//            db.execSQL(PayResult.CREATE_TABLE)
+//
+//            db.execSQL(Extra.CREATE_TABLE)
+//
+//            db.execSQL(ProductPromotion.CREATE_TABLE)
 
             db.setTransactionSuccessful()
         } catch (e: Exception) {
@@ -79,11 +79,11 @@ class DbOpenHelper
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         Timber.e("Updating table from $oldVersion to $newVersion")
          if (BuildConfig.DEBUG) {
-            db.dropTable(PaymentData.TABLE_NAME, true)
-            db.dropTable(RoomHistory.TABLE_NAME, true)
-            db.dropTable(PayResult.TABLE_NAME, true)
-            db.dropTable(ServerEvents.TABLE_NAME, true)
-            db.dropTable(Extra.TABLE_NAME, true)
+//            db.dropTable(PaymentData.TABLE_NAME, true)
+//            db.dropTable(RoomHistory.TABLE_NAME, true)
+//            db.dropTable(PayResult.TABLE_NAME, true)
+//            db.dropTable(ServerEvents.TABLE_NAME, true)
+//            db.dropTable(Extra.TABLE_NAME, true)
             debug(db)
          } else {
              release(db, oldVersion, newVersion)
@@ -107,23 +107,23 @@ class DbOpenHelper
     }
 
     fun dropData(db: SQLiteDatabase, isAll: Boolean = false) {
-        if (isAll) {
-            db.dropTable(PaymentData.TABLE_NAME, true)
-            db.dropTable(RoomHistory.TABLE_NAME, true)
-            db.dropTable(PayResult.TABLE_NAME, true)
-            db.dropTable(ServerEvents.TABLE_NAME, true)
-            db.dropTable(Extra.TABLE_NAME, true)
-        }
-        db.dropTable(ServerEvents.TABLE_NAME, true)
-        db.dropTable(Partner.TABLE_NAME, true)
-        db.dropTable(TreeView.TABLE_NAME, true)
-        db.dropTable(Product.TABLE_NAME_TODAY, true)
-        db.dropTable(Product.TABLE_NAME, true)
-        db.dropTable(Categorie.TABLE_NAME, true)
-        db.dropTable(RoomGroup.TABLE_NAME, true)
-        db.dropTable(Room.TABLE_NAME, true)
-        db.dropTable(Extra.TABLE_NAME, true)
-        db.dropTable(ProductPromotion.TABLE_NAME, true)
+//        if (isAll) {
+//            db.dropTable(PaymentData.TABLE_NAME, true)
+//            db.dropTable(RoomHistory.TABLE_NAME, true)
+//            db.dropTable(PayResult.TABLE_NAME, true)
+//            db.dropTable(ServerEvents.TABLE_NAME, true)
+//            db.dropTable(Extra.TABLE_NAME, true)
+//        }
+//        db.dropTable(ServerEvents.TABLE_NAME, true)
+//        db.dropTable(Partner.TABLE_NAME, true)
+//        db.dropTable(TreeView.TABLE_NAME, true)
+//        db.dropTable(Product.TABLE_NAME_TODAY, true)
+//        db.dropTable(Product.TABLE_NAME, true)
+//        db.dropTable(Categorie.TABLE_NAME, true)
+//        db.dropTable(RoomGroup.TABLE_NAME, true)
+//        db.dropTable(Room.TABLE_NAME, true)
+//        db.dropTable(Extra.TABLE_NAME, true)
+//        db.dropTable(ProductPromotion.TABLE_NAME, true)
         onCreate(db)
     }
 

@@ -6,7 +6,6 @@ import android.graphics.Color
 import android.text.Editable
 import org.joda.time.Interval
 import tamhoang.ldpro4.R
-import tamhoang.ldpro4.data.constants.Constants.Companion.GMT
 import java.net.URLDecoder
 import java.text.*
 import java.util.*
@@ -181,11 +180,11 @@ fun String.convertDateTimeToString2() : String {
 fun String.convertTimeZoneToDateTime(): Date {
     try {
         val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSFFFFF'Z'")
-        sdf.timeZone = TimeZone.getTimeZone(GMT)
+//        sdf.timeZone = TimeZone.getTimeZone(GMT)
         return sdf.parse(this)
     } catch (e: Exception) {
         val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SS'Z'") //ios
-        sdf.timeZone = TimeZone.getTimeZone(GMT)
+//        sdf.timeZone = TimeZone.getTimeZone(GMT)
         return sdf.parse(this)
     }
 }
@@ -198,7 +197,7 @@ fun String.convertTimeZoneToHourString() : String {
 
 fun String.convertHourStringToDateString() : String {
     val df = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSFFFFF'Z'")
-    df.timeZone = TimeZone.getTimeZone(GMT)
+//    df.timeZone = TimeZone.getTimeZone(GMT)
     val date = SimpleDateFormat("HH:mm").parse(this)
     return df.format(date)
 }
@@ -217,7 +216,7 @@ fun String.createDateTo2Date(date: Date): Date {
 
 fun String.convertTimeZoneToDateTimeGMT(): Date {
     val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSFFFFF")
-    sdf.timeZone = TimeZone.getTimeZone(GMT)
+//    sdf.timeZone = TimeZone.getTimeZone(GMT)
     return sdf.parse(this)
 }
 
@@ -237,7 +236,7 @@ fun String.convertStrDayToTimeZone(): String {
 //======================================== Date To String ==========================================
 fun Date.convertToTimeZone() : String {
     val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSFFFFF'Z'")
-    sdf.timeZone = TimeZone.getTimeZone(GMT)
+//    sdf.timeZone = TimeZone.getTimeZone(GMT)
 
     return sdf.format(this)
 }
@@ -341,113 +340,113 @@ fun Int.convertVersionCodeToDateString(): String {
     return "${if(date < 10) "0$date" else date}/${if(month < 10) "0$month" else month}/$year"
 }
 
-class DateTimeUtils {
-    companion object {
-        fun dateTimeFace(context: Context, l: Long) : String {
-            var d1 = (l / 60).toDouble()
-            if (l < 5) {
-                return context.getString(R.string.ngay_bay_gio)
-            }
-            if (l < 60) {
-                return (StringBuilder()).append("$l").append(" ").append(context.getString(R.string.giay_truoc)).toString()
-            }
-            if (l < 60 * 2) {
-                return context.getString(R.string.mot_phut_truoc)
-            }
-            if (d1 < 60) {
-                return (StringBuilder()).append("$d1").append(" ").append(context.getString(R.string.phut_truoc)).toString()
-            }
-            if (d1 < 60 * 2) {
-                return context.getString(R.string.mot_gio_truoc)
-            }
-            if (d1 < 60 * 24) {
-                d1 = Math.floor(d1 / 60)
-                return (StringBuilder()).append("$d1").append(" ").append(context.getString(R.string.gio_truoc)).toString()
-            }
-            if (d1 < 60 * 24 * 2) {
-                return context.getString(R.string.hom_qua)
-            }
-            if (d1 < 60 * 24 * 7) {
-                d1 = Math.floor(d1 / (60 * 24))
-                return (StringBuilder()).append("$d1").append(" ").append(context.getString(R.string.hom_truoc)).toString()
-            }
-            if (d1 < 60 * 24 * 7 * 2) {
-                return context.getString(R.string.tuan_truoc)
-            }
-            if (d1 < 60 * 24 * 31) {
-                d1 = Math.floor(d1 / (60 * 24 * 7))
-                return (StringBuilder()).append("$d1").append(" ").append(context.getString(R.string.tuan_truoc)).toString()
-            }
-            if (d1 < 60 * 24 * (30 + 31)) {
-                return context.getString(R.string.thang_truoc)
-            }
-            if (d1 < 60 * 24 * (30 + 31)) {
-                d1 = Math.floor(d1 / (60 * 24 * 30))
-                return (StringBuilder()).append("$d1").append(" ").append(context.getString(R.string.thang_truoc)).toString()
-            }
-            if (d1 < 60 * 24 * (365 + 366)) {
-                return context.getString(R.string.nam_ngoai)
-            }
-            return if (d1 > 60 * 24 * (365 + 366)) {
-                d1 = Math.floor(d1 / (60 * 24 * 365))
-                (StringBuilder()).append("$d1").append(" ").append(context.getString(R.string.nam_truoc)).toString()
-            } else {
-                context.getString(R.string.dang_cap_nhat)
-            }
-        }
-
-        fun getDifferenceDate(startDate: Date, endDate: Date, resources: Resources) : String {
-            var isUseSpace = false
-
-            val interval = Interval(startDate.time, endDate.time)
-            val period = interval.toPeriod()
-
-            val years = if (period.years > 0) "${period.years} ${resources.getString(R.string.tieu_de_nam)}" else ""
-            isUseSpace = isUseSpace || years.isNotEmpty()
-            val months = if (period.months > 0) "${if(isUseSpace) " " else ""}${period.months} ${resources.getString(R.string.thang)}" else ""
-            isUseSpace = isUseSpace || months.isNotEmpty()
-            val days = if (period.days > 0) "${if(isUseSpace) " " else ""}${period.days} ${resources.getString(R.string.ngay_2)}" else ""
-            isUseSpace = isUseSpace || days.isNotEmpty()
-            val hours = if (period.hours > 0) "${if(isUseSpace) " " else ""}${period.hours} ${resources.getString(R.string.gio)}" else ""
-            isUseSpace = isUseSpace || hours.isNotEmpty()
-            val minutesAndSecond = period.minutes + (if (period.seconds > 0) 1 else 0)
-            val minutes = if (minutesAndSecond > 0) "${if(isUseSpace) " " else ""}$minutesAndSecond ${resources.getString(R.string.phut)}" else ""
-            //isUseSpace = isUseSpace || minutes.isNotEmpty()
-            //val seconds = if (period.seconds > 0) "${if(isUseSpace) " " else ""}${period.seconds} ${resources.getString(R.string.giay)}" else ""
-            return "$years$months$days$hours$minutes"
-        }
-
-        fun getDifferenceDateMinutes(startDate: Date, endDate: Date) : Int {
-            return getDifferenceDateSeconds(startDate, endDate) / 60
-        }
-
-        fun getDifferenceDateSeconds(startDate: Date, endDate: Date) : Int {
-            val diff = Math.abs(endDate.time - startDate.time)
-            val diffSeconds = (diff / 1000)
-            return  diffSeconds.toInt()
-        }
-
-        // Dau vao la so giay, tinh ra String: gio, phut, giay
-        fun getDifferenceDate(secondsCount: Double, resources: Resources) : String {
-            return getDifferenceDate(secondsCount.toInt(), resources)
-        }
-        fun getDifferenceDate(secondsCount: Int, resources: Resources) : String {
-            // 2 thoi gia cung bat dau 1 luc.
-            var start = Date()
-            var end   = Date()
-            // Cong them khoang thoi gian chenh lech
-            var seconds = secondsCount % 60
-            var minutes = secondsCount / 60 % 60
-            var hours = secondsCount / 60 / 60
-
-            end.hours   += hours
-            end.minutes += minutes
-            end.seconds += seconds
-
-            return getDifferenceDate(start, end, resources)
-        }
-    }
-}
+//class DateTimeUtils {
+//    companion object {
+//        fun dateTimeFace(context: Context, l: Long) : String {
+//            var d1 = (l / 60).toDouble()
+//            if (l < 5) {
+//                return context.getString(R.string.ngay_bay_gio)
+//            }
+//            if (l < 60) {
+//                return (StringBuilder()).append("$l").append(" ").append(context.getString(R.string.giay_truoc)).toString()
+//            }
+//            if (l < 60 * 2) {
+//                return context.getString(R.string.mot_phut_truoc)
+//            }
+//            if (d1 < 60) {
+//                return (StringBuilder()).append("$d1").append(" ").append(context.getString(R.string.phut_truoc)).toString()
+//            }
+//            if (d1 < 60 * 2) {
+//                return context.getString(R.string.mot_gio_truoc)
+//            }
+//            if (d1 < 60 * 24) {
+//                d1 = Math.floor(d1 / 60)
+//                return (StringBuilder()).append("$d1").append(" ").append(context.getString(R.string.gio_truoc)).toString()
+//            }
+//            if (d1 < 60 * 24 * 2) {
+//                return context.getString(R.string.hom_qua)
+//            }
+//            if (d1 < 60 * 24 * 7) {
+//                d1 = Math.floor(d1 / (60 * 24))
+//                return (StringBuilder()).append("$d1").append(" ").append(context.getString(R.string.hom_truoc)).toString()
+//            }
+//            if (d1 < 60 * 24 * 7 * 2) {
+//                return context.getString(R.string.tuan_truoc)
+//            }
+//            if (d1 < 60 * 24 * 31) {
+//                d1 = Math.floor(d1 / (60 * 24 * 7))
+//                return (StringBuilder()).append("$d1").append(" ").append(context.getString(R.string.tuan_truoc)).toString()
+//            }
+//            if (d1 < 60 * 24 * (30 + 31)) {
+//                return context.getString(R.string.thang_truoc)
+//            }
+//            if (d1 < 60 * 24 * (30 + 31)) {
+//                d1 = Math.floor(d1 / (60 * 24 * 30))
+//                return (StringBuilder()).append("$d1").append(" ").append(context.getString(R.string.thang_truoc)).toString()
+//            }
+//            if (d1 < 60 * 24 * (365 + 366)) {
+//                return context.getString(R.string.nam_ngoai)
+//            }
+//            return if (d1 > 60 * 24 * (365 + 366)) {
+//                d1 = Math.floor(d1 / (60 * 24 * 365))
+//                (StringBuilder()).append("$d1").append(" ").append(context.getString(R.string.nam_truoc)).toString()
+//            } else {
+//                context.getString(R.string.dang_cap_nhat)
+//            }
+//        }
+//
+//        fun getDifferenceDate(startDate: Date, endDate: Date, resources: Resources) : String {
+//            var isUseSpace = false
+//
+//            val interval = Interval(startDate.time, endDate.time)
+//            val period = interval.toPeriod()
+//
+//            val years = if (period.years > 0) "${period.years} ${resources.getString(R.string.tieu_de_nam)}" else ""
+//            isUseSpace = isUseSpace || years.isNotEmpty()
+//            val months = if (period.months > 0) "${if(isUseSpace) " " else ""}${period.months} ${resources.getString(R.string.thang)}" else ""
+//            isUseSpace = isUseSpace || months.isNotEmpty()
+//            val days = if (period.days > 0) "${if(isUseSpace) " " else ""}${period.days} ${resources.getString(R.string.ngay_2)}" else ""
+//            isUseSpace = isUseSpace || days.isNotEmpty()
+//            val hours = if (period.hours > 0) "${if(isUseSpace) " " else ""}${period.hours} ${resources.getString(R.string.gio)}" else ""
+//            isUseSpace = isUseSpace || hours.isNotEmpty()
+//            val minutesAndSecond = period.minutes + (if (period.seconds > 0) 1 else 0)
+//            val minutes = if (minutesAndSecond > 0) "${if(isUseSpace) " " else ""}$minutesAndSecond ${resources.getString(R.string.phut)}" else ""
+//            //isUseSpace = isUseSpace || minutes.isNotEmpty()
+//            //val seconds = if (period.seconds > 0) "${if(isUseSpace) " " else ""}${period.seconds} ${resources.getString(R.string.giay)}" else ""
+//            return "$years$months$days$hours$minutes"
+//        }
+//
+//        fun getDifferenceDateMinutes(startDate: Date, endDate: Date) : Int {
+//            return getDifferenceDateSeconds(startDate, endDate) / 60
+//        }
+//
+//        fun getDifferenceDateSeconds(startDate: Date, endDate: Date) : Int {
+//            val diff = Math.abs(endDate.time - startDate.time)
+//            val diffSeconds = (diff / 1000)
+//            return  diffSeconds.toInt()
+//        }
+//
+//        // Dau vao la so giay, tinh ra String: gio, phut, giay
+//        fun getDifferenceDate(secondsCount: Double, resources: Resources) : String {
+//            return getDifferenceDate(secondsCount.toInt(), resources)
+//        }
+//        fun getDifferenceDate(secondsCount: Int, resources: Resources) : String {
+//            // 2 thoi gia cung bat dau 1 luc.
+//            var start = Date()
+//            var end   = Date()
+//            // Cong them khoang thoi gian chenh lech
+//            var seconds = secondsCount % 60
+//            var minutes = secondsCount / 60 % 60
+//            var hours = secondsCount / 60 / 60
+//
+//            end.hours   += hours
+//            end.minutes += minutes
+//            end.seconds += seconds
+//
+//            return getDifferenceDate(start, end, resources)
+//        }
+//    }
+//}
 //CharSequence to string
 fun Editable.formatPriceDisplay(): String {
     val nf = NumberFormat.getNumberInstance(Locale.US)
